@@ -20,6 +20,7 @@ def planf(commands):
 
     for thread in threads:
         thread.join()
+    print(threads)
 
     # while commands:
     #     command = commands.pop(0)
@@ -29,6 +30,11 @@ def planf(commands):
     #     process.terminate()
     #     commands.append(command)
 
+def planificador_run(commands):
+    commands_here = [(f"custom_container_image_{i}", int(STime), int(RunTime)) for i,(command, STime, RunTime) in enumerate(commands)]
+    planf(commands_here)
+
+"""
 if __name__ == "__main__":
     ar_commands = "commands.txt"
     with open(ar_commands, "r") as f:
@@ -37,7 +43,7 @@ if __name__ == "__main__":
                     (command, STime, RunTime) in enumerate(commands)]
 
     planf(commands)
-
+"""
 
     ##Prueba para el planificador inicial
     # commands = [
