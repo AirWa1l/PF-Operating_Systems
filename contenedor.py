@@ -8,17 +8,17 @@ def c_dockerfile(command,index):
     CMD {command}
     """
     dockerfile_n = f"Dockerfile_{index}"
-    with open("Dockerfile","w") as f:
+    with open(dockerfile_n,"w") as f:
         f.write(dockerfile)
     return dockerfile_n
 
 def bar_container(dockerfile_n,image_n):
     os.system(f"docker build -f {dockerfile_n} -t {image_n} .")
-    ##os.system(f"docker run --rm {image_n}")
+    os.system(f"docker run --rm {image_n}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python contenedor.py '<command>'")
+        print("Usage: python contenedor.py '<ar_commands>'")
         sys.exit(1)
 
     ar_commands = sys.argv[1]

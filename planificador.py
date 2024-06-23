@@ -4,7 +4,7 @@ import subprocess
 import threading
 
 def contenedor_r(image_n, RunTime):
-    process = subprocess.Popen(f"docker run --rm{image_n}",
+    process = subprocess.Popen(f"docker run --rm {image_n}",
                                shell = True)
     time.sleep(RunTime)
     process.terminate()
@@ -13,7 +13,8 @@ def contenedor_r(image_n, RunTime):
 def planf(commands):
     threads =[]
     for command, STime, RunTime in commands:
-        thread = threading.Timer(STime, contenedor_r, args = (command,RunTime))
+        thread = threading.Timer(STime, contenedor_r, 
+                                args = (command,RunTime))
         threads.append(thread)
         thread.start()
 
@@ -31,8 +32,10 @@ def planf(commands):
 if __name__ == "__main__":
     ar_commands = "commands.txt"
     with open(ar_commands, "r") as f:
-        commands = [line.strip().split(" ") for line in f]
-        commands = [(f"custom_container_image_{i}", int(STime), int(RunTime)) for i, (command, STime, RunTime) in enumerate(commands)]
+        commands = [line.strip().split(",") for line in f]
+        commands = [(f"custom_container_image_{i}", int(STime), int(RunTime)) for i,
+                    (command, STime, RunTime) in enumerate(commands)]
+
     planf(commands)
 
 

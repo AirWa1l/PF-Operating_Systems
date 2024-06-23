@@ -1,4 +1,4 @@
-ps -ef,0,1
+ps -ef,0,10
 ls -al,5,3
 top -b -n 1,10,5
 sleep 5,5,5
