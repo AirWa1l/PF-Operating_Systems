@@ -2,6 +2,7 @@ import sys
 from contenedor import container_run
 from planificador import planificador_run
 
+
 if __name__ == "__main__":
     print(sys.argv)
     if 1 < len(sys.argv) < 3:

@@ -3,6 +3,20 @@ import time
 import subprocess
 import threading
 
+def execute_command(command, index):
+    dockerfile_n = f"Dockerfile_{index}"
+    image_n = f"custom_container_image_{index}"
+    dockerfile_content = f"""
+    FROM ubuntu:latest
+    RUN apt-get update && apt-get install -y procps
+    CMD {command}
+    """
+    with open(dockerfile_n, "w") as f:
+        f.write(dockerfile_content)
+    os.system(f"docker build -f {dockerfile_n} -t {image_n} .")
+    os.system(f"docker run --rm {image_n}")
+
+
 def contenedor_r(image_n, RunTime):
     process = subprocess.Popen(f"docker run --rm {image_n}",
                                shell = True)
