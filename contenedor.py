@@ -16,7 +16,7 @@ def c_dockerfile(command, index):
 
 def bar_container(dockerfile_n, image_n):
     os.system(f"docker build -f {dockerfile_n} -t {image_n} .")
-    os.system(f"docker run --rm {image_n}")
+    #os.system(f"docker run --rm {image_n}")
 
 def container_run():
     if len(sys.argv) < 3 or sys.argv[2] == "planner":
