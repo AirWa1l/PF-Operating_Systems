@@ -3,20 +3,6 @@ import time
 import subprocess
 import threading
 
-def execute_command(command, index):
-    dockerfile_n = f"Dockerfile_{index}"
-    image_n = f"custom_container_image_{index}"
-    dockerfile_content = f"""
-    FROM ubuntu:latest
-    RUN apt-get update && apt-get install -y procps
-    CMD {command}
-    """
-    with open(dockerfile_n, "w") as f:
-        f.write(dockerfile_content)
-    os.system(f"docker build -f {dockerfile_n} -t {image_n} .")
-    os.system(f"docker run --rm {image_n}")
-
-
 def contenedor_r(image_n, RunTime):
     process = subprocess.Popen(f"docker run --rm {image_n}", shell=True)
     time.sleep(RunTime)
@@ -27,6 +13,10 @@ def execute_command(command, RunTime):
 
 # FCFS Algorithm
 def fcfs(commands):
+    avg_turnaround = 0
+    avg_response = 0
+    turnaround_time_list = []
+    response_time_list = []
     current_time = 0
     for command, arrival_time, burst_time in commands:
         if current_time < arrival_time:
@@ -36,8 +26,16 @@ def fcfs(commands):
         thread.join(burst_time)
         turnaround_time = current_time + burst_time - arrival_time
         response_time = current_time - arrival_time
+        turnaround_time_list.append(turnaround_time)
+        response_time_list.append(response_time_list)
+        avg_turnaround += turnaround_time # Increment the value for then calculate the average
+        avg_response += response_time
         print(f"FCFS - Command: {command}, Turnaround Time: {turnaround_time}, Response Time: {response_time}")
         current_time += burst_time
+    avg_turnaround = avg_turnaround / len(command)
+    avg_response = avg_response / len(command)
+    dict_to_return = {'turnaround times' : turnaround_time_list, 'response times':response_time_list,'average turnaround times':avg_turnaround, 'average response times':avg_response}
+    return dict_to_return
 
 # SPN Algorithm
 def spn(commands):
@@ -169,39 +167,3 @@ def planificador_run(commands, algoritmo='fcfs', quantum=2):
     else:
         print("Algoritmo no soportado.")
 
-
-# ##Elmines el quantum de aqui(Adr)
-# def planf(commands):
-#     threads =[]
-#     for command, STime, RunTime in commands:
-#         thread = threading.Timer(STime, contenedor_r, 
-#                                 args = (command,RunTime))
-#         threads.append(thread)
-#         thread.start()
-
-#     for thread in threads:
-#         thread.join()
-#     print(threads)
-
-# def planificador_run(commands):
-#     commands_here = [(f"custom_container_image_{i}", int(STime), int(RunTime)) for i,(command, STime, RunTime) in enumerate(commands)]
-#     # planf(commands_here)
-
-"""
-if __name__ == "__main__":
-    ar_commands = "commands.txt"
-    with open(ar_commands, "r") as f:
-        commands = [line.strip().split(",") for line in f]
-        commands = [(f"custom_container_image_{i}", int(STime), int(RunTime)) for i,
-                    (command, STime, RunTime) in enumerate(commands)]
-
-    planf(commands)
-"""
-
-    ##Prueba para el planificador inicial
-    # commands = [
-    #     "docker run --rm custom_container_image_1",
-    #     .............
-    # ]
-    # quantum = 5
-    # planf(commands, quantum)

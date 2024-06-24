@@ -37,31 +37,5 @@ def container_run():
 
     return commands
 
-"""
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python contenedor.py '<ar_commands>'")
-        sys.exit(1)
 
-    ar_commands = sys.argv[1]
-
-    with open(ar_commands, "r") as f:
-        commands = [line.strip() for line in f]
-        
-    commands = transform_list(commands)
-
-    for i, command in enumerate(commands):
-        dockerfile_n = c_dockerfile(command[0], i)
-        image_n = f"custom_container_image_{i}"
-        bar_container(dockerfile_n, image_n)
-
-    ##Pruebas Iniciales, olvidar
-    #command = sys.argv[1]
-    #image_name = "custom_container_image"
-
-    #c_dockerfile(command)
-    #bar_container(image_name)
-
-    print(commands)
-"""
    
