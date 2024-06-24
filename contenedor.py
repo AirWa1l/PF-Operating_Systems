@@ -3,25 +3,24 @@ import sys
 from transform_list import transform_list
 
 
-def c_dockerfile(command,index):
+def c_dockerfile(command, index):
     dockerfile = f"""
     FROM ubuntu:latest
     RUN apt-get update && apt-get install -y procps
     CMD {command}
     """
     dockerfile_n = f"Dockerfile_{index}"
-    with open(dockerfile_n,"w") as f:
+    with open(dockerfile_n, "w") as f:
         f.write(dockerfile)
     return dockerfile_n
 
-def bar_container(dockerfile_n,image_n):
+def bar_container(dockerfile_n, image_n):
     os.system(f"docker build -f {dockerfile_n} -t {image_n} .")
     os.system(f"docker run --rm {image_n}")
 
 def container_run():
-    print(sys.argv)
-    if sys.argv[2] == "planner" :
-        print("Usage: wich commands you want to prove ? ")
+    if len(sys.argv) < 3 or sys.argv[2] == "planner":
+        print("Usage: main.py container <commands_file> planner <algorithm>")
         sys.exit(1)
 
     ar_commands = sys.argv[2]
