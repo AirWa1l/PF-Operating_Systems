@@ -7,7 +7,7 @@ ventana.geometry("500x400")
 ventana.grid_rowconfigure(0, weight=3)
 ventana.grid_columnconfigure(0,weight=3)
 ventana.resizable(False,False)
-ventana.iconbitmap('icono.ico')
+#ventana.iconbitmap('https://github.com/AirWa1l/PF-Operating_Systems/blob/GUI/GUI/icono.ico')
 
 
 
