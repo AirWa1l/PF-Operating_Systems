@@ -3,12 +3,16 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	config "github.com/Frank-Totti/PF-Operating_Systems/Config"
 	forms "github.com/Frank-Totti/PF-Operating_Systems/Forms"
 	models "github.com/Frank-Totti/PF-Operating_Systems/Models"
+	security "github.com/Frank-Totti/PF-Operating_Systems/Security"
+	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 func throwError(err error, status int, w http.ResponseWriter) {
@@ -17,6 +21,82 @@ func throwError(err error, status int, w http.ResponseWriter) {
 		"Status": status, // Modificar el status
 		"Error":  err.Error(),
 	})
+}
+
+func LoginUser(w http.ResponseWriter, r *http.Request) {
+	var creds security.Credentials
+	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	transaction := config.Db.Begin()
+
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	var user models.Usuario
+	if err := transaction.Where("email = ?", creds.Email).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			http.Error(w, "User not found", http.StatusUnauthorized)
+		} else {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password))
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	expirationTime := time.Now().Add(24 * time.Hour)
+	claims := &security.Claims{
+		UserID: user.ID,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(security.JwtKey)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   tokenString,
+		Expires: expirationTime,
+	})
+
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success": true,
+		"State":   http.StatusOK,
+		"token":   token,
+	})
+}
+
+func LogoutUser(w http.ResponseWriter, r *http.Request) {
+	// Eliminar cookie de token
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   "",
+		Expires: time.Now().Add(-time.Hour),
+	})
+
+	reponse := map[string]interface{}{
+		"success": true,
+		"State":   http.StatusOK,
+		"message": "Logout sucefully",
+	}
+
+	json.NewEncoder(w).Encode(reponse)
 }
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -398,10 +478,40 @@ func Clean(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func GenerateImage() {
+/*
+	func GenerateImage(w http.ResponseWriter, r *http.Request) {
+		var proceso models.Proceso
 
-}
+		err := json.NewDecoder(r.Body).Decode(&proceso)
 
+		if err != nil {
+			throwError(err, http.StatusBadRequest, w)
+			return
+		}
+
+		transaction := config.Db.Begin()
+
+		if err := transaction.Error; err != nil {
+			transaction.Rollback()
+			throwError(err, http.StatusInternalServerError, w)
+			return
+		}
+
+		if err := transaction.Table("proceso").First(&proceso).Error; err != nil {
+			transaction.Rollback()
+			throwError(err, http.StatusNotFound, w)
+			return
+		}
+
+		if err := transaction.Commit().Error; err != nil {
+			transaction.Rollback()
+			throwError(err, http.StatusInternalServerError, w)
+			return
+		}
+
+		CreateImage(proceso, config.Db, w, r)
+	}
+*/
 func GenerateGetImageID(w http.ResponseWriter, r *http.Request) {
 
 	var request forms.SearchCommand
@@ -436,5 +546,50 @@ func GenerateGetImageID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	GetImageID(request.Comando, user, config.Db, w)
+
+}
+
+func GeneratePro_exec(w http.ResponseWriter, r *http.Request) {
+
+	var pro_exec models.ProcesoxEjecución
+
+	var proceso models.Proceso
+
+	var ejecucion models.Ejecución
+
+	err := json.NewDecoder(r.Body).Decode(&pro_exec)
+
+	if err != nil {
+		throwError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	transaction := config.Db.Begin()
+
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	if err := transaction.Where("proceso.id = ?", pro_exec.Pid).First(&proceso).Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusNotFound, w)
+		return
+	}
+
+	if err := transaction.Where("ejecucion.id = ?", pro_exec.Eid).First(&ejecucion).Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusNotFound, w)
+		return
+	}
+
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	CreatePro_Exec(proceso, ejecucion, config.Db, w)
 
 }

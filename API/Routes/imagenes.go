@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
+	config "github.com/Frank-Totti/PF-Operating_Systems/Config"
 	models "github.com/Frank-Totti/PF-Operating_Systems/Models"
 	"gorm.io/gorm"
 )
 
-func CreateImage(proceso models.Proceso, db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+func CreateImage(w http.ResponseWriter, r *http.Request) {
 
 	var image models.Imagen
 
@@ -19,9 +20,7 @@ func CreateImage(proceso models.Proceso, db *gorm.DB, w http.ResponseWriter, r *
 		return
 	}
 
-	image.Proceso = proceso
-
-	transaction := db.Begin()
+	transaction := config.Db.Begin()
 
 	if err := transaction.Error; err != nil {
 		transaction.Rollback()
