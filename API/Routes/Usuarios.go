@@ -56,7 +56,8 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &security.Claims{
-		UserID: user.ID,
+		UserID:       user.ID,
+		UserNickName: user.Nickname,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -593,3 +594,14 @@ func GeneratePro_exec(w http.ResponseWriter, r *http.Request) {
 	CreatePro_Exec(proceso, ejecucion, config.Db, w)
 
 }
+
+/*
+REGISTER USER
+{
+  "Nickname":"Susana Valencia",
+  "Email":"SusanaPrincesa@gmail.com",
+  "Password":"Tomacito1503"
+
+}
+
+*/
