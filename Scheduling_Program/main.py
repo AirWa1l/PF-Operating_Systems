@@ -1,6 +1,6 @@
 import sys
 from contenedor import container_run
-from planificador import planificador_run
+from Scheduling_Program.planificador import planificador_run
 
 
 if __name__ == "__main__":
