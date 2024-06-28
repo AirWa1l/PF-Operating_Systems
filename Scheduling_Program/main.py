@@ -12,8 +12,8 @@ class ConsoleApp(cmd.Cmd):
 
     def __init__(self):
         super().__init__()
-        self.us = UserSession()  # Instancia de la clase UserSession
-        self.token = None  # Variable para almacenar el token de sesión
+        self.us = UserSession() 
+        self.token = None  
 
     def do_register(self, args):
         """Register a new user."""
@@ -40,7 +40,6 @@ class ConsoleApp(cmd.Cmd):
             print("User is already authenticated.")
         else:
             if args:
-                # Puedes procesar los argumentos si es necesario
                 username, password = args.split()
             else:
                 username = input("Enter username: ").strip()
@@ -55,9 +54,9 @@ class ConsoleApp(cmd.Cmd):
         if self.us.is_authenticated():
             self.us.log_out()
             self.token = None
-            #print("User logged out.")
-        #else:
-           #print("No user logged in.")
+            print("User logged out.")
+        else:
+           print("No user logged in.")
 
     def do_salir(self, args):
         """Exit the application."""
