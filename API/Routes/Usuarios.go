@@ -373,6 +373,13 @@ func GenerateExecution(w http.ResponseWriter, r *http.Request) {
 
 	var user models.Usuario
 
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		throwError(err, http.StatusBadRequest, w)
+		return
+	}
+
 	transaction := config.Db.Begin()
 
 	if err := transaction.Error; err != nil {
@@ -572,6 +579,8 @@ func GeneratePro_exec(w http.ResponseWriter, r *http.Request) {
 		throwError(err, http.StatusBadRequest, w)
 		return
 	}
+
+	//log.Println(pro_exec)
 
 	transaction := config.Db.Begin()
 

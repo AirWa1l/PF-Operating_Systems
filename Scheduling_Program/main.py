@@ -1,8 +1,11 @@
 import sys
-from contenedor import container_run
-from planificador import planificador_run
+#from contenedor import container_run
+#from planificador import planificador_run
 from Models.UserSession import UserSession
 import cmd
+import subprocess
+from transform_list import transform_list
+from planificador import planificador_run
 
 #us = UserSession()
 
@@ -57,11 +60,70 @@ class ConsoleApp(cmd.Cmd):
             print("User logged out.")
         else:
            print("No user logged in.")
+    
+    def do_exec(self,arg):
+        try:
+            args = arg.split()
+            if len(args) != 2:
+                print("Use: exec <archive.txt> <algoritmh>")
+                return
 
-    def do_salir(self, args):
+            filename, algorithm = args
+
+            subprocess.run(f"cat {filename}", shell=True, capture_output=True, text=True)
+
+            with open(filename, "r") as f:
+                commands = [line.strip() for line in f]
+
+            commands = transform_list(commands)
+
+            dic = self.us.set_execution(commands)
+
+            planificador_run(commands=commands,images=dic,algoritmo=algorithm)
+
+            """
+            scheduling_command = f"scheduling {filename} {algorithm}"
+
+            print(f"Executing: {scheduling_command}")
+
+            result = subprocess.run(scheduling_command, shell=True, capture_output=True, text=True)
+
+            print("Salida del comando:")
+            print(result.stdout)
+            if result.stderr:
+                print("Errores:")
+                print(result.stderr)
+            """
+
+        except FileNotFoundError:
+            print(f"Archivo no encontrado: {filename}")
+        #except Exception as e:
+            #print(f"Error al ejecutar el comando de scheduling: {e}")
+
+
+    def do_exit(self, args):
         """Exit the application."""
         print("Exiting the application.")
         return True
+    
+    def do_gete(self,args):
+        execs = self.us.get_user_executions()
+
+        if execs == False:
+            print("Error")
+        else:
+            print(execs)
+    
+    def do_shell(self, arg):
+        """Execute a command on the system."""
+        print("Executing a command of the system:", arg)
+        try:
+            output = subprocess.check_output(arg, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
+            #print(output)
+        except subprocess.CalledProcessError as e:
+            print(f"Error executing the command: {e.output}")
+    
+    #def pass
 
     def default(self, line):
         print(f"Command '{line}' not recognized. Type 'help' for a list of available commands.")

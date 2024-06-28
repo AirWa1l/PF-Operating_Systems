@@ -41,10 +41,10 @@ func CreateImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]interface{}{
-		"State":    http.StatusCreated,
-		"success":  true,
-		"message":  "imagen created successfully",
-		"image_id": image.ImagenID,
+		"State":   http.StatusCreated,
+		"success": true,
+		"message": "imagen created successfully",
+		"image":   image,
 	}
 
 	json.NewEncoder(w).Encode(response)

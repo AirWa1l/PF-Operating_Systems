@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	config "github.com/Frank-Totti/PF-Operating_Systems/Config"
 	"gorm.io/gorm"
 )
@@ -24,8 +22,8 @@ type Ejecución struct {
 
 	UID uint `gorm:"not null;column:uid"`
 
-	CreatedAt time.Time
-	DeletedAt time.Time
+	//CreatedAt time.Time
+	//DeletedAt time.Time
 
 	Usuario Usuario `gorm:"foreignKey:uid;references:id"`
 }

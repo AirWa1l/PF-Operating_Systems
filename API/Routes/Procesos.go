@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	config "github.com/Frank-Totti/PF-Operating_Systems/Config"
@@ -27,7 +28,7 @@ func CreateProcess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transaction.Table("proceso").Where("proceso.comando = ? AND proceso.tiempo_inicio = ? AND proceso.tiempo_estimado = ?", proceso.Comando, proceso.Tiempo_inicio, proceso.Tiempo_estimado).Error; err != nil {
+	if err := transaction.Table("proceso").Where("proceso.comando = ? AND proceso.tiempo_inicio = ? AND proceso.tiempo_estimado = ?", proceso.Comando, proceso.Tiempo_inicio, proceso.Tiempo_estimado).First(&proceso).Error; err != nil {
 		if err := transaction.Create(&proceso).Error; err != nil {
 			transaction.Rollback()
 			throwError(err, http.StatusInternalServerError, w)
@@ -40,6 +41,7 @@ func CreateProcess(w http.ResponseWriter, r *http.Request) {
 		throwError(err, http.StatusInternalServerError, w)
 		return
 	}
+	log.Println(proceso.ID)
 
 	response := map[string]interface{}{
 		"Status":  http.StatusCreated,

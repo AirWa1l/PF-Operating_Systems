@@ -204,7 +204,7 @@ def round_robin(commands, quantum=2):
 def planificador_run(commands, images ,algoritmo='fcfs', quantum=2):
     formatted_commands = [(command[0], int(command[1]), int(command[2])) for command in commands]
     if algoritmo == 'fcfs':
-        print(fcfs(formatted_commands))
+        print(fcfs(formatted_commands,images))
     elif algoritmo == 'spn':
         print(spn(formatted_commands))
     elif algoritmo == 'srt':

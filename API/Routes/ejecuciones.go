@@ -3,7 +3,6 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
 	models "github.com/Frank-Totti/PF-Operating_Systems/Models"
 	"gorm.io/gorm"
@@ -11,7 +10,7 @@ import (
 
 func CreateExecution(usuario models.Usuario, db *gorm.DB, w http.ResponseWriter) {
 
-	execution := models.Ejecución{CreatedAt: time.Now(), Usuario: usuario, UID: usuario.ID}
+	execution := models.Ejecución{Usuario: usuario, UID: usuario.ID}
 
 	transaction := db.Begin()
 
