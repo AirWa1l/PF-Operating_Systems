@@ -1,14 +1,14 @@
 import os
 import sys
-from Scheduling_Program.transform_list import transform_list
-
+from transform_list import transform_list
+"""
 
 def c_dockerfile(command, index):
-    dockerfile = f"""
+    dockerfile = f'''
     FROM ubuntu:latest
     RUN apt-get update && apt-get install -y procps
     CMD {command}
-    """
+    '''
     dockerfile_n = f"Dockerfile_{index}"
     with open(dockerfile_n, "w") as f:
         f.write(dockerfile)
@@ -18,6 +18,7 @@ def bar_container(dockerfile_n, image_n):
     os.system(f"docker build -f {dockerfile_n} -t {image_n} .")
     #os.system(f"docker run --rm {image_n}")
 
+"""
 def container_run():
     if len(sys.argv) < 3 or sys.argv[2] == "planner":
         print("Usage: main.py container <commands_file> planner <algorithm>")
@@ -30,12 +31,14 @@ def container_run():
         
     commands = transform_list(commands)
 
+    return commands
+"""
     for i, command in enumerate(commands):
         dockerfile_n = c_dockerfile(command[0], i)
         image_n = f"custom_container_image_{i}"
         bar_container(dockerfile_n, image_n)
 
     return commands
-
+"""
 
    

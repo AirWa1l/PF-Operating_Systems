@@ -37,7 +37,7 @@ func main() {
 	usuarios.Handle("/buscar/ejecuciones/{id}", security.Authenticate(http.HandlerFunc(routes.GetUserExecutions))).Methods("GET")
 	usuarios.HandleFunc("/log-in", routes.LoginUser).Methods("POST")
 	//usuarios.HandleFunc("/log-out", routes.LogoutUser).Methods("GET")                            // Protected
-	usuarios.Handle("/log-out", security.Authenticate(http.HandlerFunc(routes.LogoutUser))).Methods("GET")
+	usuarios.Handle("/log-out", security.Authenticate(http.HandlerFunc(routes.Logout))).Methods("GET")
 	//usuarios.HandleFunc("/crear/ejecución", routes.GenerateExecution).Methods("POST")            // Protedted
 	usuarios.Handle("/crear/ejecución", security.Authenticate(http.HandlerFunc(routes.GenerateExecution))).Methods("POST")
 	//usuarios.HandleFunc("/eliminar/ejecución", routes.GenerateDeleteExecution).Methods("DELETE") // Protected

@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -19,12 +20,16 @@ func throwError(err error, status int, w http.ResponseWriter) {
 
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"Status": status, // Modificar el status
+		"succes": false,
 		"Error":  err.Error(),
 	})
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
 	var creds security.Credentials
+
+	log.Println("Logeado pa")
+
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
@@ -77,14 +82,17 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	})
 
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"success": true,
-		"State":   http.StatusOK,
-		"token":   token,
+		"success":     true,
+		"State":       http.StatusOK,
+		"tokenString": tokenString,
+		"token":       token,
 	})
 }
 
-func LogoutUser(w http.ResponseWriter, r *http.Request) {
+func Logout(w http.ResponseWriter, r *http.Request) {
 	// Eliminar cookie de token
+	log.Println("Deslogeado pa")
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    "token",
 		Value:   "",
@@ -552,7 +560,7 @@ func GenerateGetImageID(w http.ResponseWriter, r *http.Request) {
 
 func GeneratePro_exec(w http.ResponseWriter, r *http.Request) {
 
-	var pro_exec models.ProcesoxEjecución
+	var pro_exec forms.Union
 
 	var proceso models.Proceso
 

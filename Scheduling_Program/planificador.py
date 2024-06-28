@@ -12,18 +12,18 @@ def execute_command(command, RunTime):
     contenedor_r(command, RunTime)
 
 # FCFS Algorithm
-def fcfs(commands):
+def fcfs(commands,dict_of_images):
     avg_turnaround = 0
     avg_response = 0
     turnaround_time_list = []
     response_time_list = []
     current_time = 0
-    i = 0
+    #i = 0
     for command, arrival_time, burst_time in commands:
         if current_time < arrival_time:
             current_time = arrival_time
-        image_n = f"custom_container_image_{i}"
-        thread = threading.Thread(target=execute_command, args=(image_n, burst_time)) # args=(command, burst_time)
+        #image_n = f"custom_container_image_{i}"
+        thread = threading.Thread(target=execute_command, args=(dict_of_images[command][0], burst_time)) # args=(command, burst_time)
         thread.start()
         thread.join(burst_time)
         turnaround_time = current_time + burst_time - arrival_time
@@ -34,7 +34,7 @@ def fcfs(commands):
         avg_response += response_time
         print(f"FCFS - Command: {command}, Turnaround Time: {turnaround_time}, Response Time: {response_time}")
         current_time += burst_time
-        i += 1
+        #i += 1
     avg_turnaround_r = round(avg_turnaround / len(commands),3)
     avg_response_r = round(avg_response / len(commands),3)
     dict_to_return = {'turnaround times' : turnaround_time_list, 'response times':response_time_list,'average turnaround times':avg_turnaround_r, 'average response times':avg_response_r}
@@ -201,7 +201,7 @@ def round_robin(commands, quantum=2):
 
 # Planificador principal
 ## Modificar la parte de algoritmo = 'fcfs' para que reciba una lista dinamica de los algoritmos y el elegido
-def planificador_run(commands, algoritmo='fcfs', quantum=2):
+def planificador_run(commands, images ,algoritmo='fcfs', quantum=2):
     formatted_commands = [(command[0], int(command[1]), int(command[2])) for command in commands]
     if algoritmo == 'fcfs':
         print(fcfs(formatted_commands))

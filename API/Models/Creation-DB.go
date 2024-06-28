@@ -50,8 +50,8 @@ type Imagen struct {
 
 	PID        uint   `gorm:"not null;column:pid"`
 	ImagenID   string `gorm:"not null;unique;column:imagen_id"`
-	ImagenUsed string `gorm:"VARCHAR(20);column:imagen_used"`
-	ImagenName string `gorm:"VARCHAR(20);column:imagen_name"`
+	ImagenUsed string `gorm:"VARCHAR(20);column:imagen_used"` // Represent the version, latests,...
+	ImagenName string `gorm:"VARCHAR(20);column:imagen_name"` // Represent the name of the image
 
 	Proceso Proceso `gorm:"foreignKey:pid;references:id"`
 }
