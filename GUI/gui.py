@@ -1,11 +1,11 @@
 from tkinter import *
-from tkinter import ttk
 from tkinter import messagebox
 
 # Contenedor principal
 ventana = Tk()
-ventana.title("Inicio")
+ventana.title("AppSO")
 ventana.geometry("500x400")  # Ajuste del tamaño de la ventana principal más pequeña
+# ventana.config(bg="#7777CF")  # Color de fondo de la ventana principal
 
 # Frames
 inicio = Frame(ventana, borderwidth=3)
@@ -41,6 +41,7 @@ def center_window(window, width, height):
     window.geometry(f'{width}x{height}+{x}+{y}')
 
 def iniciar():
+    global usuario_registrado
     if usuario_registrado:
         inicio.pack_forget()
         comandos.pack(expand=True, fill="both")
@@ -136,7 +137,7 @@ def abrir_ingresar_comando():
     cerrar_btn = Button(ventanaComandos, text="Cerrar", command=ventanaComandos.destroy, bg="red", fg="white")
     cerrar_btn.pack(pady=10)
 
-# Permite el inicio de sesion si el usuario ya está registrado
+# Permite el inicio de sesión si el usuario ya está registrado
 def iniciar_sesion():
     global usuario_registrado
     username_data = username.get()
@@ -158,6 +159,14 @@ def iniciar_sesion():
     except FileNotFoundError:
         messagebox.showerror("Error de inicio de sesión", "No hay usuarios registrados. Por favor, registre un usuario primero.")
 
+def logout():
+    global usuario_registrado
+    usuario_registrado = False
+    comandos.pack_forget()
+    inicio.pack(expand=True, fill="both")
+    ventana.update()
+    print("Cerraste sesión")
+
 def mostrarhistorial():
     comandos.pack_forget()
     historial.pack()
@@ -178,23 +187,23 @@ def devolverseComandos():
 center_window(ventana, 500, 400)  # Centrar la ventana principal con las nuevas dimensiones
 
 # Etiquetas inicio
-bienvenida = Label(inicio, text="Bienvenido a la app", background="#E0FFFF", font=("Times New Roman", 16, "italic"), borderwidth=1, relief="sunken")
-integrantes = Label(inicio, text="Integrantes:", font=("Times New Roman", 14), background="#F5CBA7", relief="ridge")
+bienvenida = Label(inicio, text="Bienvenido a la app", font=("Times New Roman", 18), fg="red")
+integrantes = Label(inicio, text="Developers", font=("Times New Roman", 14), fg="black")
 
 integrantes_list = Listbox(inicio)
 nombres = ["Juan Pinto", "Calle", "Adrian marin", "Franccesco", "Mafla"]
 for name in nombres:
     integrantes_list.insert(END, name)
 
-integrantes.grid(row=2, column=1, padx=10, pady=10, sticky="w")
-bienvenida.grid(row=0, column=2, columnspan=1, sticky="e", padx=10, pady=10)
-integrantes_list.grid(row=3, column=1, sticky="n", padx=10, pady=10)
+bienvenida.grid(row=0, column=2, padx=35, pady=10, sticky="nsew")
+integrantes.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
+integrantes_list.grid(row=2, column=1, padx=10, pady=10, sticky="nsew")
 
 # Ingresar datos de usuario en el frame inicio
 username_label = Label(inicio, text="Usuario", bg="white")
-username_label.place(x=220, y=70)
-password_label = Label(inicio, text="Contrasena", bg="white")
-password_label.place(x=220, y=150)
+username_label.place(x=320, y=60)
+password_label = Label(inicio, text="Contraseña", bg="white")
+password_label.place(x=310, y=120)
 
 username = StringVar()
 password = StringVar()
@@ -202,22 +211,26 @@ password = StringVar()
 username_entry = Entry(inicio, textvariable=username, width=20)
 password_entry = Entry(inicio, textvariable=password, width=20, show="*")
 
-username_entry.place(x=320, y=70)
-password_entry.place(x=320, y=150)
+username_entry.place(x=270, y=90)
+password_entry.place(x=270, y=150)
 
 # Botones en el frame 'inicio'
 ingrCommandos = Button(inicio, text="Ingresar comandos", font=("Times New Roman", 14), relief="groove", command=abrir_ingresar_comando, width=15, height=1)
-ingrCommandos.place(x=280, y=200)
+ingrCommandos.place(x=270, y=200)
 
 registrar = Button(inicio, text="Registrar", font=("Times New Roman", 14), relief="groove", command=abrir_registro, width=15, height=1)
-registrar.place(x=280, y=240)
+registrar.place(x=270, y=240)
 
 iniciar_sesion_btn = Button(inicio, text="Iniciar sesion", font=("Times New Roman", 14), relief="groove", command=iniciar_sesion, width=15, height=1)
-iniciar_sesion_btn.place(x=280, y=280)
+iniciar_sesion_btn.place(x=270, y=280)
 
 # Botones en el frame 'comandos'
 botonHistorial = Button(comandos, text="Historial", command=mostrarhistorial, width=10, height=2, bg="orange")
 botonHistorial.grid(row=1, column=0)
+
+# Botón para cerrar sesión
+logout_btn = Button(comandos, text="Log Out", command=logout, width=10, height=2, bg="red")
+logout_btn.grid(row=2, column=0)
 
 # Botón en el frame 'historial'
 botonBackHistorial = Button(historial, text="Volver", command=devolverseComandos, width=10, height=2, bg="red")
