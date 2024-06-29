@@ -319,7 +319,10 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 func GetUserExecutions(w http.ResponseWriter, r *http.Request) {
 
-	var procesos []models.Proceso
+	//var procesos []models.ProcesoxEjecución
+
+	var ejecuciones []models.Ejecución
+
 	params := mux.Vars(r)
 
 	var user models.Usuario
@@ -340,16 +343,31 @@ func GetUserExecutions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transaction.Table("proceso").Select("proceso.*").
-		Joins("JOIN proceso_ejecucion ON proceso_ejecucion.pid = proceso.id").
-		Joins("JOIN ejecucion ON ejecucion.id = proceso_ejecucion.eid").
-		Joins("JOIN usuario ON ejecucion.uid = usuario.id").
-		Where("usuario.id = ?", id).Find(&procesos).Error; err != nil {
+	if err := transaction.Preload("Usuario").Table("ejecucion").Joins("JOIN usuario ON usuario.id = ejecucion.uid").Where("usuario.id = ?", id).Find(&ejecuciones).Error; err != nil {
 		transaction.Rollback()
 		throwError(err, http.StatusNotFound, w)
 		return
 	}
 
+	map_exec_processes := map[uint][]models.Proceso{}
+
+	for i := 0; i < len(ejecuciones); i++ {
+		actual_execution_id := ejecuciones[i].ID
+
+		map_exec_processes[actual_execution_id] = GetProcessByExec(actual_execution_id, config.Db, w)
+
+	}
+	/*
+		if err := transaction.Preload("Proceso").Preload("Ejecución.Usuario").Table("proceso_ejecucion").
+			Joins("JOIN proceso ON proceso_ejecucion.pid = proceso.id").
+			Joins("JOIN ejecucion ON ejecucion.id = proceso_ejecucion.eid").
+			Joins("JOIN usuario ON ejecucion.uid = usuario.id").
+			Where("usuario.id = ?", id).Find(&procesos).Error; err != nil {
+			transaction.Rollback()
+			throwError(err, http.StatusNotFound, w)
+			return
+		}
+	*/
 	if err := transaction.Commit().Error; err != nil {
 		transaction.Rollback()
 		throwError(err, http.StatusInternalServerError, w)
@@ -360,7 +378,7 @@ func GetUserExecutions(w http.ResponseWriter, r *http.Request) {
 		"State":    http.StatusOK,
 		"success":  true,
 		"message":  "User find successfully",
-		"Procesos": procesos,
+		"Procesos": map_exec_processes,
 	}
 
 	json.NewEncoder(w).Encode(response)

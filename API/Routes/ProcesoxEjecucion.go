@@ -41,3 +41,31 @@ func CreatePro_Exec(proceso models.Proceso, ejecucion models.Ejecución, db *gor
 	json.NewEncoder(w).Encode(response)
 
 }
+
+func GetProcessByExec(id_exec uint, db *gorm.DB, w http.ResponseWriter) []models.Proceso {
+
+	var processes []models.Proceso
+
+	transaction := db.Begin()
+
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return nil
+	}
+
+	if err := transaction.Table("proceso").Select("proceso.*").Joins("JOIN proceso_ejecucion ON proceso_ejecucion.pid = proceso.id AND proceso_ejecucion.eid = ?", id_exec).Find(&processes).Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return nil
+	}
+
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return nil
+	}
+
+	return processes
+
+}

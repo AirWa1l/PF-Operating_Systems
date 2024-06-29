@@ -4,7 +4,7 @@ import sys
 from Models.UserSession import UserSession
 import cmd
 import subprocess
-from transform_list import transform_list
+from transform_list import transform_list,show_executions_graphic
 from planificador import planificador_run
 
 #us = UserSession()
@@ -107,19 +107,19 @@ class ConsoleApp(cmd.Cmd):
         return True
     
     def do_gete(self,args):
-        execs = self.us.get_user_executions()
-
+        execs = dict(self.us.get_user_executions())
         if execs == False:
             print("Error")
-        else:
-            print(execs)
+
+        for key,value in execs.items():
+            show_executions_graphic(key,value)
     
     def do_shell(self, arg):
         """Execute a command on the system."""
         print("Executing a command of the system:", arg)
         try:
             output = subprocess.check_output(arg, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
-            #print(output)
+            print(output)
         except subprocess.CalledProcessError as e:
             print(f"Error executing the command: {e.output}")
     

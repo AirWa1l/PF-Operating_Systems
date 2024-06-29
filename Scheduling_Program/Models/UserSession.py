@@ -66,7 +66,6 @@ class UserSession:
             return False
         
     def log_out(self):
-        print(self.is_authenticated())
         if not self.is_authenticated():
             print("User is not authenticated")
             return False
@@ -84,7 +83,7 @@ class UserSession:
                 try:
                     json_response = response.json()
                     if json_response.get("success"):
-                        print(json_response.get("message"))
+                        #print(json_response.get("message"))
                         self.token = None  # Limpiar el token en el cliente
                         return True
                     else:
@@ -128,7 +127,7 @@ class UserSession:
 
         json = response.json()
         #print(json)
-        if response.status_code == 200 and json.get("success") == True and json.get("State") == 201:
+        if response.status_code == 200 and json.get("success") == True and json.get("State") == 200:
 
             return (json.get("Image").get("ImagenID"),json.get("Image").get("ImagenName"),json.get("Image").get("ImagenUsed"))
         
@@ -145,8 +144,6 @@ class UserSession:
         response = requests.post(url=url,json=data)
 
         json = response.json()
-
-        print(json)
 
         if response.status_code == 200 and json.get("success") == True and json.get("State") == 201:
             return (json.get("image").get("ImagenID"),json.get("image").get("ImagenName"),json.get("image").get("ImagenUsed"))
@@ -209,9 +206,9 @@ class UserSession:
             #print("err 2")
             #print(image) # Esta enviando un boleano
             img = self.evaluate_image_in_os(image[0])
-            print("err 3")
+            #print("err 3")
             if not img:
-                dockerfile = c_dockerfile(process[0])
+                dockerfile = self.c_dockerfile(process[0])
 
                 image_id = self.build_image(path=dockerfile[0],tag=dockerfile[1])
 
@@ -278,7 +275,8 @@ class UserSession:
 
                     parameter = self.get_image(command)
 
-                    if not parameter:
+
+                    if parameter == False:
 
                         
                         ruta,dockerfile,tag = self.c_dockerfile(command=command)
@@ -306,11 +304,11 @@ class UserSession:
                         dict_to_images_id[(command,response.json().get("ID"))] = parameter
 
                 else:
-                    print(response.json().get("message"))
+                    #print(response.json().get("message"))
                     return
 
         else:
-            print(json.get("message"))
+            #print(json.get("message"))
             return
         
         urlM = "http://localhost:3000/Usuarios/match/proceso_ejecución"
@@ -336,28 +334,4 @@ class UserSession:
         dict_to_return =  self.evaluate_images_in_os(data=dict_to_images_id)
 
         return dict_to_return
-        
-
-def c_dockerfile(command, path):
-        dockerfile_content = f"""
-        FROM ubuntu:latest
-        RUN apt-get update && apt-get install -y procps
-        CMD {command}
-        """
-        dockerfile_path = os.path.join(path, f"Dockerfile_{command}")
-        with open(dockerfile_path, "w") as f:
-            f.write(dockerfile_content)
-        return dockerfile_path
-
-def build_image(path, tag, client):
-        
-        try:
-            print(f"Building image from {path} with tag {tag}")
-            image, _ = client.images.build(path=path, tag=tag)
-            print(f"Image {tag} built successfully.")
-            return image.id
-        except docker.errors.BuildError as e:
-            print(f"Error building image: {e}")
-            return None
-
-
+      
