@@ -48,6 +48,7 @@ func main() {
 	usuarios.Handle("/buscar/imagen", security.Authenticate(http.HandlerFunc(routes.GenerateGetImageID))).Methods("POST")
 	usuarios.HandleFunc("/crear/proceso", routes.CreateProcess).Methods("POST")
 	usuarios.HandleFunc("/match/proceso_ejecución", routes.GeneratePro_exec).Methods("POST")
+	usuarios.Handle("/reusar/ejecución", security.Authenticate(http.HandlerFunc(routes.GetProcessesByExec))).Methods("POST")
 
 	///////////////////////////////////////////////// Rutas para las imagenes
 

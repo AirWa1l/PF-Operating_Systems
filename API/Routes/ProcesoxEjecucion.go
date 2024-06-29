@@ -69,3 +69,35 @@ func GetProcessByExec(id_exec uint, db *gorm.DB, w http.ResponseWriter) []models
 	return processes
 
 }
+
+func ReusedExecution(id_exec uint, id_user uint, id_proceso uint, db *gorm.DB, w http.ResponseWriter) *models.Imagen {
+
+	var image models.Imagen
+
+	transaction := db.Begin()
+
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return nil
+	}
+
+	if err := transaction.Preload("Proceso").Select("imagen.*").
+		Joins("JOIN proceso ON proceso.id = imagen.pid AND proceso.id = ?", id_proceso).
+		Joins("JOIN proceso_ejecucion ON proceso_ejecucion.pid = proceso.id").
+		Joins("JOIN ejecucion ON ejecucion.id = proceso_ejecucion.eid AND ejecucion.id = ?", id_exec).
+		Joins("JOIN usuario ON ejecucion.uid = usuario.id").Where("usuario.id = ?", id_user).First(&image).Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusNotFound, w)
+		return nil
+	}
+
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return nil
+	}
+
+	return &image
+
+}

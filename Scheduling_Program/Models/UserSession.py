@@ -42,6 +42,49 @@ class UserSession:
             return False
         return True
 
+    def reused_user_executions(self,eid:int):
+
+        dict_to_retorn = {}
+        commands = []
+
+        if not self.is_authenticated():
+            print("User is not authenticated")
+            return False
+    
+        url = "http://localhost:3000/Usuarios/reusar/ejecución"
+
+        headers = {
+            "Authorization": f"Bearer {self.token}"
+        }
+        cookies = {
+            "token": self.token
+        }
+
+        data = {"uid":self.id,"eid":eid}
+
+        response = requests.post(url=url,headers=headers,cookies=cookies,json=data)
+
+        json = response.json()
+
+        if response.status_code == 200 and json.get("Status") == 200 and json.get("success") == True:
+
+            temporal_dict = dict(json.get("Match")) 
+
+            for key,value in temporal_dict.items():
+
+                imagen_id = value["ImagenID"]
+                imagen_used = value["ImagenUsed"]
+                imagen_name = value["ImagenName"]
+
+                new_value = (imagen_id,imagen_name,imagen_used)
+
+                commands.append((value["Proceso"]["Comando"],value["Proceso"]["Tiempo_inicio"],value["Proceso"]["Tiempo_estimado"]))
+
+                dict_to_retorn[key] = new_value
+
+        return dict_to_retorn,commands
+
+
     def get_user_executions(self):
         if not self.is_authenticated():
             print("User is not authenticated")
@@ -330,7 +373,7 @@ class UserSession:
                 print(json.get("message")) 
                 return
             """
-        print(dict_to_images_id)
+        #print(dict_to_images_id)
         dict_to_return =  self.evaluate_images_in_os(data=dict_to_images_id)
 
         return dict_to_return

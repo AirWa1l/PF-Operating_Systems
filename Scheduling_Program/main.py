@@ -61,14 +61,37 @@ class ConsoleApp(cmd.Cmd):
         else:
            print("No user logged in.")
     
+    def do_rept(self,arg):
+
+        args = arg.split()
+
+        if len(args) < 2:
+            print("use: <execution id> <algorithm>")
+            return
+        
+
+        id_exec = int(args[0])
+        algorithm = args[1]
+
+        dic,commands = self.us.reused_user_executions(id_exec)
+
+        if len(args) == 3:
+            quatum = args[2]
+
+            planificador_run(commands=commands,images=dic,algoritmo=algorithm,quantum=quatum)
+
+        elif len(args) == 2:
+            
+            planificador_run(commands=commands,images=dic,algoritmo=algorithm)
+    
     def do_exec(self,arg):
         try:
             args = arg.split()
             if len(args) != 2:
                 print("Use: exec <archive.txt> <algoritmh>")
                 return
-
-            filename, algorithm = args
+            
+            filename, algorithm = args 
 
             subprocess.run(f"cat {filename}", shell=True, capture_output=True, text=True)
 
@@ -79,7 +102,17 @@ class ConsoleApp(cmd.Cmd):
 
             dic = self.us.set_execution(commands)
 
-            planificador_run(commands=commands,images=dic,algoritmo=algorithm)
+            print(dic)
+
+            if len(args) == 3:
+                
+                quantum = args[2] 
+
+                planificador_run(commands=commands,images=dic,algoritmo=algorithm,quantum=quantum)
+
+            elif len(args) == 2:
+            
+                planificador_run(commands=commands,images=dic,algoritmo=algorithm)
 
             """
             scheduling_command = f"scheduling {filename} {algorithm}"
