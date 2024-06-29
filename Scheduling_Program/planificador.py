@@ -59,7 +59,7 @@ def spn(commands,dict_of_images):
         if queue:
             queue.sort(key=lambda x: x[2])  # Sort by burst time
             command, arrival_time, burst_time = queue.pop(0)
-            thread = threading.Thread(target=execute_command, args=(dict_of_images[command], burst_time))
+            thread = threading.Thread(target=execute_command, args=(dict_of_images[command][0], burst_time))
             thread.start()
             thread.join(burst_time)
             turnaround_time = current_time + burst_time - arrival_time
@@ -100,7 +100,7 @@ def srt(commands,dict_of_images):
             command, arrival_time, burst_time = queue.pop(0)
             index = list(burst_times.keys())[list(burst_times.values()).index(burst_time)]
             quantum = 1  # We use quantum = 1 to simulate SRT
-            thread = threading.Thread(target=execute_command, args=(dict_of_images[command], quantum))
+            thread = threading.Thread(target=execute_command, args=(dict_of_images[command][0], quantum))
             thread.start()
             thread.join(quantum)
             remaining_time = burst_time - quantum
@@ -143,7 +143,7 @@ def hrrn(commands,dict_of_images):
             response_ratios = [(current_time - arrival_time + burst_time) / burst_time for _, arrival_time, burst_time in queue]
             index = response_ratios.index(max(response_ratios))
             command, arrival_time, burst_time = queue.pop(index)
-            thread = threading.Thread(target=execute_command, args=(dict_of_images[command], burst_time))
+            thread = threading.Thread(target=execute_command, args=(dict_of_images[command][0], burst_time))
             thread.start()
             thread.join(burst_time)
             turnaround_time = current_time + burst_time - arrival_time
@@ -184,7 +184,7 @@ def round_robin(commands, dict_of_images, quantum=2):
             command, arrival_time, burst_time = queue.pop(0)
             index = list(burst_times.keys())[list(burst_times.values()).index(burst_time)]
             if burst_time > quantum:
-                thread = threading.Thread(target=execute_command, args=(dict_of_images[command], quantum))
+                thread = threading.Thread(target=execute_command, args=(dict_of_images[command][0], quantum))
                 thread.start()
                 thread.join(quantum)
                 remaining_time = burst_time - quantum
