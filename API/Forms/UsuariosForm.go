@@ -14,6 +14,11 @@ type JustUserID struct {
 	ID uint `json:"id"`
 }
 
+type UserID_Algorithm struct {
+	ID        uint   `json:"id"`
+	Algorithm string `json:"algorithm"`
+}
+
 type SearchUser struct {
 	ID       uint   `json:"id"`
 	Nickname string `json:"Nickname"`

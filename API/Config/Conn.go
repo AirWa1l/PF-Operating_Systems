@@ -19,7 +19,6 @@ var DSN = "host=localhost user=" + connectionStringUser + " password=" + connect
 var Db *gorm.DB
 
 func Conn() {
-	log.Println(connectionStringPassword)
 	var err error
 	Db, err = gorm.Open(postgres.Open(DSN), &gorm.Config{})
 	if err != nil {

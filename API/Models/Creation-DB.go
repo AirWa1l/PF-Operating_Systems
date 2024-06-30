@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	config "github.com/Frank-Totti/PF-Operating_Systems/Config"
 	"gorm.io/gorm"
 )
@@ -24,10 +22,12 @@ type Ejecución struct {
 
 	UID uint `gorm:"not null;column:uid"`
 
-	CreatedAt time.Time
-	DeletedAt time.Time
+	Algoritmh string `gorm:"not null;column:algoritmh;VARCHAR(5)"`
 
-	Usuario Usuario `gorm:"foreignKey:uid;references:id"`
+	//CreatedAt time.Time
+	//DeletedAt time.Time
+
+	Usuario Usuario `gorm:"foreignKey:uid;references:id;OnDelete:CASCADE"`
 }
 
 func (Ejecución) TableName() string {
@@ -50,8 +50,8 @@ type Imagen struct {
 
 	PID        uint   `gorm:"not null;column:pid"`
 	ImagenID   string `gorm:"not null;unique;column:imagen_id"`
-	ImagenUsed string `gorm:"VARCHAR(20);column:imagen_used"`
-	ImagenName string `gorm:"VARCHAR(20);column:imagen_name"`
+	ImagenUsed string `gorm:"VARCHAR(20);column:imagen_used"` // Represent the version, latests,...
+	ImagenName string `gorm:"VARCHAR(20);column:imagen_name"` // Represent the name of the image
 
 	Proceso Proceso `gorm:"foreignKey:pid;references:id"`
 }
@@ -66,7 +66,7 @@ type ProcesoxEjecución struct {
 	Eid uint `gorm:"column:eid;primaryKey"`
 
 	Proceso   Proceso   `gorm:"foreignKey:pid;references:id;not null"`
-	Ejecución Ejecución `gorm:"foreignKey:eid;references:id"`
+	Ejecución Ejecución `gorm:"foreignKey:eid;references:id;OnDelete:CASCADE"`
 }
 
 func (ProcesoxEjecución) TableName() string {

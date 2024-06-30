@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	forms "github.com/Frank-Totti/PF-Operating_Systems/Forms"
 	models "github.com/Frank-Totti/PF-Operating_Systems/Models"
 	"gorm.io/gorm"
 )
@@ -39,5 +40,79 @@ func CreatePro_Exec(proceso models.Proceso, ejecucion models.Ejecución, db *gor
 	}
 
 	json.NewEncoder(w).Encode(response)
+
+}
+
+func GetProcessByExec(id_exec uint, db *gorm.DB, w http.ResponseWriter) *forms.Execute_info {
+
+	var processes []models.Proceso
+
+	var execution models.Ejecución
+
+	var processes_with_algorithm forms.Execute_info
+
+	transaction := db.Begin()
+
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return nil
+	}
+
+	if err := transaction.Table("proceso").Select("proceso.*").Joins("JOIN proceso_ejecucion ON proceso_ejecucion.pid = proceso.id AND proceso_ejecucion.eid = ?", id_exec).Find(&processes).Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return nil
+	}
+
+	processes_with_algorithm.Processes = processes
+
+	if err := transaction.Table("ejecucion").Where("ejecucion.id = ?", id_exec).First(&execution).Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusNotFound, w)
+		return nil
+	}
+
+	processes_with_algorithm.Algoritmh = execution.Algoritmh
+
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return nil
+	}
+
+	return &processes_with_algorithm
+
+}
+
+func ReusedExecution(id_exec uint, id_user uint, id_proceso uint, db *gorm.DB, w http.ResponseWriter) *models.Imagen {
+
+	var image models.Imagen
+
+	transaction := db.Begin()
+
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return nil
+	}
+
+	if err := transaction.Preload("Proceso").Select("imagen.*").
+		Joins("JOIN proceso ON proceso.id = imagen.pid AND proceso.id = ?", id_proceso).
+		Joins("JOIN proceso_ejecucion ON proceso_ejecucion.pid = proceso.id").
+		Joins("JOIN ejecucion ON ejecucion.id = proceso_ejecucion.eid AND ejecucion.id = ?", id_exec).
+		Joins("JOIN usuario ON ejecucion.uid = usuario.id").Where("usuario.id = ?", id_user).First(&image).Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusNotFound, w)
+		return nil
+	}
+
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusInternalServerError, w)
+		return nil
+	}
+
+	return &image
 
 }
