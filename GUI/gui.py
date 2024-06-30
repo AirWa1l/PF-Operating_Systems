@@ -5,7 +5,6 @@ from tkinter import messagebox
 ventana = Tk()
 ventana.title("AppSO")
 ventana.geometry("500x400")  # Ajuste del tamaño de la ventana principal más pequeña
-# ventana.config(bg="#7777CF")  # Color de fondo de la ventana principal
 
 # Frames
 inicio = Frame(ventana, borderwidth=3)
@@ -109,29 +108,29 @@ def validar_entry(text):
 
 # Permite el inicio de los comandos y guardarlos
 def abrir_ingresar_comando():
-    ventanaComandos = Toplevel()
-    ventanaComandos.geometry("480x480")
-    ventanaComandos.resizable(False, False)
-    ventanaComandos.title("Ingreso de comandos")
-    ventanaComandos.config(background="lightblue")
+    for widget in comandos.winfo_children():
+        widget.destroy()
 
-    comando_label = Label(ventanaComandos, text="Ingrese el comando:", bg="lightblue")
-    comando_label.pack(pady=10)
-    comando_entry = Entry(ventanaComandos, width=50)
-    comando_entry.pack(pady=10)
+    # comandos.configure(bg="cyan")
 
-    stTime_label = Label(ventanaComandos, text="Tiempo Inicio", bg= "lightblue")
-    stTime_label.pack(pady=10)
-    stTime_entry = Entry(ventanaComandos, width=50)
-    stTime_entry.pack(pady=10)
+    comando_label = Label(comandos, text="Ingrese el comando", bg="lightblue")
+    comando_label.place(x=40, y=10)
+    comando_entry = Entry(comandos, width=23)
+    comando_entry.place(x=10, y=40)
 
-    esTime_label = Label(ventanaComandos, text="Tiempo estimado", bg="lightblue")
-    esTime_label.pack(pady=10)
-    esTime_entry = Entry(ventanaComandos, width=50)
-    esTime_entry.pack(pady=10)
+    stTime_label = Label(comandos, text="Tiempo Inicio", bg="lightblue")
+    stTime_label.place(x=55, y=70)
+    stTime_entry = Entry(comandos, width=23)
+    stTime_entry.place(x=10, y=100)
+
+    esTime_label = Label(comandos, text="Tiempo estimado", bg="lightblue")
+    esTime_label.place(x=45, y=130)
+    esTime_entry = Entry(comandos, width=23)
+    esTime_entry.place(x=10, y=160)
+    
 
     # Registra la funcion creada
-    vcmd = (ventanaComandos.register(validar_entry), '%P')
+    vcmd = (comandos.register(validar_entry), '%P')
 
     # Aplicamos la validacion a stTime y esTime
     stTime_entry.config(validate='key', validatecommand=vcmd)
@@ -145,19 +144,42 @@ def abrir_ingresar_comando():
             actualizar_lista_comandos()
             print(comandos_lista)  # Para ver los comandos guardados en la consola
 
-    guardar_btn = Button(ventanaComandos, text="Guardar comando", command=guardar_comando, bg="green", fg="white")
-    guardar_btn.pack(pady=10)
+    guardar_btn = Button(comandos, text="Guardar comando", command=guardar_comando, bg="green", fg="white", width=20)
+    guardar_btn.place(x=10, y=305)
 
-    comandos_listbox = Listbox(ventanaComandos, width=50, height=10)
-    comandos_listbox.pack(pady=10)
+    comandos_listbox_label = Label(comandos, text="Lista de Comandos", bg="lightblue")
+    comandos_listbox_label.place(x=280, y=10)
+
+    comandos_listbox = Listbox(comandos, width=34, height=18)
+    comandos_listbox.place(x=210, y=50)
 
     def actualizar_lista_comandos():
         comandos_listbox.delete(0, END)
         for comando in comandos_lista:
             comandos_listbox.insert(END, comando)
 
-    cerrar_btn = Button(ventanaComandos, text="Cerrar", command=ventanaComandos.destroy, bg="red", fg="white")
-    cerrar_btn.pack(pady=10)
+    cerrar_btn = Button(comandos, text="Cerrar", command=volver_a_comandos, bg="red", fg="white", width=20)
+    cerrar_btn.place(x=10, y=345)
+
+    ventana.update()
+
+def volver_a_comandos():
+    for widget in comandos.winfo_children():
+        widget.destroy()
+    # Añadir botones originales al frame "comandos"
+    bot_fram_ad = Frame(comandos)
+    bot_fram_ad.pack(expand=True)
+
+    botonHistorial = Button(bot_fram_ad, text="Historial", command=mostrarhistorial, width=15, height=2, bg="orange")
+    botonHistorial.pack(pady=5)
+
+    ingrCommandos = Button(bot_fram_ad, text="Ingresar comandos", command=abrir_ingresar_comando, width=15, height=2, bg="dark salmon")
+    ingrCommandos.pack(pady=5)
+
+    logout_btn = Button(bot_fram_ad, text="Log Out", command=logout, width=15, height=2, bg="red")
+    logout_btn.pack(pady=5)
+
+    ventana.update()
 
 # Permite el inicio de sesión si el usuario ya está registrado
 def iniciar_sesion():
@@ -174,7 +196,7 @@ def iniciar_sesion():
                 messagebox.showinfo("Inicio de sesión exitoso", "Has iniciado sesión correctamente.")
                 inicio.pack_forget()  # Oculta el frame de inicio
                 comandos.pack(expand=True, fill="both")  # Muestra el frame de comandos
-                ventana.update()
+                volver_a_comandos()
                 print("Empezaste la aplicación")
             else:
                 messagebox.showerror("Error de inicio de sesión", "Usuario o contraseña incorrectos.")
