@@ -18,23 +18,33 @@ def show_executions_graphic(id_exec:str,processes : list):
     YELLOW = Fore.YELLOW
     CYAN = Fore.CYAN
     WHITE = Fore.WHITE
+    MAGENTA = Fore.MAGENTA
     RESET = Style.RESET_ALL
 
+    alg = processes["Algoritmh"]
+
     print("")
-    print(RED + f"For execution: {id_exec}" + RESET)
+    print(RED + f"For execution: {id_exec}" + RESET + MAGENTA + " Algorithm : " + f"{alg}" + RESET)
     print("")
-    for process in processes:
+
+    procesos = processes["Processes"]
+
+    #print(procesos)
+    
+    for process in procesos:
 
         comando = process["Comando"]
         ti = process["Tiempo_inicio"]
         te = process["Tiempo_estimado"]
 
-        print(WHITE + f"Command : {comando}" + RESET)
-        print("")
-        print(YELLOW + f"Init Time : {ti}" + RESET )
-        print("")
-        print(CYAN + f"Estimed Time : {te}" + RESET)
-        print("")
+        comando = WHITE + f"Command : {comando}" + RESET
+
+        inicio = YELLOW + f"Init Time : {ti}" + RESET 
+
+        estimado =  CYAN + f"Estimed Time : {te}" + RESET
+
+        print(comando + "  " + inicio + "  " + estimado)
+
         print("")
 
 

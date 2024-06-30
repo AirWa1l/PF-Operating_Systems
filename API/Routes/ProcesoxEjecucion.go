@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	forms "github.com/Frank-Totti/PF-Operating_Systems/Forms"
 	models "github.com/Frank-Totti/PF-Operating_Systems/Models"
 	"gorm.io/gorm"
 )
@@ -42,9 +43,13 @@ func CreatePro_Exec(proceso models.Proceso, ejecucion models.Ejecución, db *gor
 
 }
 
-func GetProcessByExec(id_exec uint, db *gorm.DB, w http.ResponseWriter) []models.Proceso {
+func GetProcessByExec(id_exec uint, db *gorm.DB, w http.ResponseWriter) *forms.Execute_info {
 
 	var processes []models.Proceso
+
+	var execution models.Ejecución
+
+	var processes_with_algorithm forms.Execute_info
 
 	transaction := db.Begin()
 
@@ -60,13 +65,23 @@ func GetProcessByExec(id_exec uint, db *gorm.DB, w http.ResponseWriter) []models
 		return nil
 	}
 
+	processes_with_algorithm.Processes = processes
+
+	if err := transaction.Table("ejecucion").Where("ejecucion.id = ?", id_exec).First(&execution).Error; err != nil {
+		transaction.Rollback()
+		throwError(err, http.StatusNotFound, w)
+		return nil
+	}
+
+	processes_with_algorithm.Algoritmh = execution.Algoritmh
+
 	if err := transaction.Commit().Error; err != nil {
 		transaction.Rollback()
 		throwError(err, http.StatusInternalServerError, w)
 		return nil
 	}
 
-	return processes
+	return &processes_with_algorithm
 
 }
 

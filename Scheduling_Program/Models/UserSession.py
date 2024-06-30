@@ -84,6 +84,29 @@ class UserSession:
 
         return dict_to_retorn,commands
 
+    def clean(self):
+
+        url = "http://localhost:3000/Usuarios/eliminar/todo"
+
+        data = {"id":self.id}
+
+        headers = {
+            "Authorization": f"Bearer {self.token}"
+        }
+        cookies = {
+            "token": self.token
+        }
+
+        response = requests.delete(url = url, json = data, headers = headers, cookies = cookies)
+
+        json = response.json()
+
+        if response.status_code == 200 and json.get("State") == 204 and json.get("success") == True:
+
+            return True
+
+        return False
+
 
     def get_user_executions(self):
         if not self.is_authenticated():
@@ -103,6 +126,8 @@ class UserSession:
 
         if response.status_code == 200 and response.json().get("success") == True:
             executions = response.json().get("Procesos")
+            #alg = response.json().get("Procesos").get()
+            #print(executions)
             return executions
         else:
             print("Failed to fetch executions")
@@ -272,13 +297,13 @@ class UserSession:
 
         return dict_to_return
 
-    def set_execution(self,processes:list):
+    def set_execution(self,processes:list,alg):
         id_processes = []
         id_exec = 0
         dict_to_images_id = {}
         urlE = "http://localhost:3000/Usuarios/crear/ejecución"
 
-        data = {"id":self.id}
+        data = {"id":self.id,"algorithm":alg}
 
         headers = {
             "Authorization": f"Bearer {self.token}"

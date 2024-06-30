@@ -349,25 +349,15 @@ func GetUserExecutions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	map_exec_processes := map[uint][]models.Proceso{}
+	map_exec_processes := map[uint]forms.Execute_info{}
 
 	for i := 0; i < len(ejecuciones); i++ {
 		actual_execution_id := ejecuciones[i].ID
 
-		map_exec_processes[actual_execution_id] = GetProcessByExec(actual_execution_id, config.Db, w)
+		map_exec_processes[actual_execution_id] = *GetProcessByExec(actual_execution_id, config.Db, w)
 
 	}
-	/*
-		if err := transaction.Preload("Proceso").Preload("Ejecución.Usuario").Table("proceso_ejecucion").
-			Joins("JOIN proceso ON proceso_ejecucion.pid = proceso.id").
-			Joins("JOIN ejecucion ON ejecucion.id = proceso_ejecucion.eid").
-			Joins("JOIN usuario ON ejecucion.uid = usuario.id").
-			Where("usuario.id = ?", id).Find(&procesos).Error; err != nil {
-			transaction.Rollback()
-			throwError(err, http.StatusNotFound, w)
-			return
-		}
-	*/
+
 	if err := transaction.Commit().Error; err != nil {
 		transaction.Rollback()
 		throwError(err, http.StatusInternalServerError, w)
@@ -387,7 +377,7 @@ func GetUserExecutions(w http.ResponseWriter, r *http.Request) {
 
 func GenerateExecution(w http.ResponseWriter, r *http.Request) {
 
-	var request forms.JustUserID
+	var request forms.UserID_Algorithm
 
 	var user models.Usuario
 
@@ -397,6 +387,8 @@ func GenerateExecution(w http.ResponseWriter, r *http.Request) {
 		throwError(err, http.StatusBadRequest, w)
 		return
 	}
+
+	log.Println(request)
 
 	transaction := config.Db.Begin()
 
@@ -418,7 +410,7 @@ func GenerateExecution(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	CreateExecution(user, config.Db, w)
+	CreateExecution(user, request.Algorithm, config.Db, w)
 
 }
 

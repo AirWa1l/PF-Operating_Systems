@@ -22,10 +22,12 @@ type Ejecución struct {
 
 	UID uint `gorm:"not null;column:uid"`
 
+	Algoritmh string `gorm:"not null;column:algoritmh;VARCHAR(5)"`
+
 	//CreatedAt time.Time
 	//DeletedAt time.Time
 
-	Usuario Usuario `gorm:"foreignKey:uid;references:id"`
+	Usuario Usuario `gorm:"foreignKey:uid;references:id;OnDelete:CASCADE"`
 }
 
 func (Ejecución) TableName() string {
@@ -64,7 +66,7 @@ type ProcesoxEjecución struct {
 	Eid uint `gorm:"column:eid;primaryKey"`
 
 	Proceso   Proceso   `gorm:"foreignKey:pid;references:id;not null"`
-	Ejecución Ejecución `gorm:"foreignKey:eid;references:id"`
+	Ejecución Ejecución `gorm:"foreignKey:eid;references:id;OnDelete:CASCADE"`
 }
 
 func (ProcesoxEjecución) TableName() string {

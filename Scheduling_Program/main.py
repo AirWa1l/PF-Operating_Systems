@@ -61,6 +61,33 @@ class ConsoleApp(cmd.Cmd):
         else:
            print("No user logged in.")
     
+    def do_clean(self,args):
+
+        args = args.split()
+
+        if len(args) > 1:
+            print("Use : clean")
+
+        print("Are you sure to delete your executions ?")
+        parameter = input("Press Y to continue, N to decline")
+
+        if parameter.lower() == "y":
+
+            self.us.clean()
+
+        elif parameter.lower == "n":
+
+            print("declined")
+            return
+
+        else:
+            
+            print("Unsupported option")
+            return
+
+        
+        
+    
     def do_rept(self,arg):
 
         args = arg.split()
@@ -100,7 +127,7 @@ class ConsoleApp(cmd.Cmd):
 
             commands = transform_list(commands)
 
-            dic = self.us.set_execution(commands)
+            dic = self.us.set_execution(commands,alg = algorithm)
 
             print(dic)
 
