@@ -168,6 +168,8 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println(request)
+
 	transaction := config.Db.Begin()
 
 	if err := transaction.Error; err != nil {
@@ -182,15 +184,15 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if request.Nickname != "" {
+	if request.Nickname != "default" {
 		user.Nickname = request.Nickname
 	}
 
-	if request.Email != "" {
+	if request.Email != "default" {
 		user.Email = request.Email
 	}
 
-	if request.Password != "" {
+	if request.Password != "default" {
 		cPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 
 		if err != nil {

@@ -83,6 +83,45 @@ class UserSession:
                 dict_to_retorn[key] = new_value
 
         return dict_to_retorn,commands
+    
+    def see_profile(self):
+
+        url = f"http://localhost:3000/Usuarios/buscar/personal/{self.id}"
+
+
+        headers = {
+            "Authorization": f"Bearer {self.token}"
+        }
+        cookies = {
+            "token": self.token
+        }
+        
+        response = requests.get(url = url, headers = headers, cookies = cookies)
+
+        if response.json().get("State") == 200:
+
+            return response.json().get("user")
+    
+        else:
+
+            return False
+
+
+    def update_profile(self,username = "default",email = "default",password = "default"):
+        
+        url = "http://localhost:3000/Usuarios/actualizar"
+
+        data = {"id":self.id,"Nickname":username,"Email":email,"Password":password}
+
+        headers = {
+            "Authorization": f"Bearer {self.token}"
+        }
+        cookies = {
+            "token": self.token
+        }
+        print(data)
+        response = requests.put(url = url, headers = headers, cookies = cookies,json = data)
+        return response.json().get("State") # StatusOK if update was okey
 
     def clean(self):
 
@@ -130,7 +169,7 @@ class UserSession:
             #print(executions)
             return executions
         else:
-            print("Failed to fetch executions")
+            #print("Failed to fetch executions")
             return False
         
     def log_out(self):
@@ -165,18 +204,6 @@ class UserSession:
         except requests.exceptions.RequestException as e:
             print(f"HTTP Request failed: {e}")
             return False
-        #self.token = False
-        """
-        response = requests.get(url = url,headers=headers)
-        
-        #json = response.json()
-        #print(json)
-        if response.status_code == 200 :
-            print(response.json())
-            return True
-        self.token = False
-        return False
-        """
 
     def get_image(self,command:str):
 
@@ -204,7 +231,6 @@ class UserSession:
 
     def set_image(self,process,imagen):
         
-        # /Imagenes
         url = "http://localhost:3000/Imagenes/crear"
 
         data = {"PID":process[1],"ImagenID":imagen["ImagenID"],"ImagenUsed":imagen["ImagenName"],"ImagenName":imagen["ImagenUsed"]}
@@ -258,9 +284,9 @@ class UserSession:
     def build_image(self,path,dockerfile_name,tag):
         
         try:
-            print(f"Building image from {path} with tag {tag}")
+            #print(f"Building image from {path} with tag {tag}")
             image, _ =  self.client.images.build(path=path, dockerfile=dockerfile_name, tag=tag)
-            print(f"Image {tag} built successfully.")
+            #print(f"Image {tag} built successfully.")
             #print(image.id)
             return image.id
         except docker.errors.BuildError as e:
@@ -288,7 +314,7 @@ class UserSession:
                 reponse = self.set_image(process=process,imagen=data)
 
                 if not reponse:
-                    print("error")
+                    #print("error")
                     return
                 
                 dict_to_return[process[0]] = (image_id,values[1],values[0])

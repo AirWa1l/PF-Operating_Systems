@@ -1,13 +1,9 @@
 import sys
-#from contenedor import container_run
-#from planificador import planificador_run
 from Models.UserSession import UserSession
 import cmd
 import subprocess
-from transform_list import transform_list,show_executions_graphic
-from planificador import planificador_run
-
-#us = UserSession()
+from Style.transform_list import transform_list,show_executions_graphic,show_profile
+from Algorithms.planificador import planificador_run
 
 class ConsoleApp(cmd.Cmd):
     intro = "Welcome to Scheduling 5 program console"
@@ -63,6 +59,9 @@ class ConsoleApp(cmd.Cmd):
     
     def do_clean(self,args):
 
+        if not self.us.is_authenticated():
+            print("Not loggin")
+
         args = args.split()
 
         if len(args) > 1:
@@ -85,10 +84,78 @@ class ConsoleApp(cmd.Cmd):
             print("Unsupported option")
             return
 
+    def do_pro(self,arg):
+
+        if not self.us.is_authenticated():
+            print("Not loggin")
+
+        if len(arg) > 1:
+            print("Use: pro")
         
+        response = self.us.see_profile()
+
+        if not response:
+            print("Error showing the profile")
+            return
+        else:
+            dic = dict(response)
+
+            name = dic["Nickname"]
+            email = dic["Email"]
+
+            show_profile(username = name, email = email)
         
+    def do_edit(self,arg):
+
+        if not self.us.is_authenticated():
+            print("Not loggin")
+
+        args = arg.split() # name <name> email <> password <>
+
+        name = "default"
+
+        email = "default"
+
+        password = "default"
+
+        for argument in range(0,len(args)):
+        
+            try :
+
+                if args[argument] == "name":
+                    
+                    name = args[argument + 1]
+
+                if args[argument] == "email":
+
+                    email = args[argument + 1]
+                
+                if args[argument] == "password":
+
+                    password = args[argument + 1]
+
+            except IndexError as e:
+                
+                print("Error: ",e)
+                return
+            
+
+        response = self.us.update_profile(username = name,email = email, password = password)
+
+        if response == 200:
+
+            print("Sucefully update")
+            return
+        
+        else:
+
+            print("Failed update")
+            return
     
     def do_rept(self,arg):
+
+        if not self.us.is_authenticated():
+            print("Not loggin")
 
         args = arg.split()
 
@@ -112,6 +179,8 @@ class ConsoleApp(cmd.Cmd):
             planificador_run(commands=commands,images=dic,algoritmo=algorithm)
     
     def do_exec(self,arg):
+        if not self.us.is_authenticated():
+            print("Not loggin")
         try:
             args = arg.split()
             if len(args) != 2:
@@ -141,24 +210,10 @@ class ConsoleApp(cmd.Cmd):
             
                 planificador_run(commands=commands,images=dic,algoritmo=algorithm)
 
-            """
-            scheduling_command = f"scheduling {filename} {algorithm}"
-
-            print(f"Executing: {scheduling_command}")
-
-            result = subprocess.run(scheduling_command, shell=True, capture_output=True, text=True)
-
-            print("Salida del comando:")
-            print(result.stdout)
-            if result.stderr:
-                print("Errores:")
-                print(result.stderr)
-            """
-
         except FileNotFoundError:
             print(f"Archivo no encontrado: {filename}")
-        #except Exception as e:
-            #print(f"Error al ejecutar el comando de scheduling: {e}")
+        except Exception as e:
+            print(f"Error al ejecutar el comando de scheduling: {e}")
 
 
     def do_exit(self, args):
@@ -167,6 +222,9 @@ class ConsoleApp(cmd.Cmd):
         return True
     
     def do_gete(self,args):
+        if not self.us.is_authenticated():
+            print("Not loggin")
+
         execs = dict(self.us.get_user_executions())
         if execs == False:
             print("Error")
@@ -199,40 +257,4 @@ if __name__ == "__main__":
     app = ConsoleApp()
     app.cmdloop()
 
-    #if len(sys.argv) < 4:
-        #print("Error: not enough parameters. Usage: main.py container <commands_file> planner <algorithm>")
-        #sys.exit(1)
-
-
-
-    
-"""
-    container = sys.argv[1]
-    planner = sys.argv[3]
-
-    if container == "container":
-
-        commands = container_run()
-
-    if planner == "planner":
-        algorithm = sys.argv[4] if len(sys.argv) > 4 else 'fcfs'
-        quantum = int(sys.argv[5]) if len(sys.argv) > 5 else 2
-        planificador_run(commands=commands, ,algoritmo=algorithm, quantum=quantum)
-"""
-
-# if __name__ == "__main__":
-#     print(sys.argv)
-#     if 1 < len(sys.argv) < 3:
-#         print("Error: not parameter digited, need to put main.py container planner")
-#         sys.exit(1)
-#     container = sys.argv[1]
-#     planner = sys.argv[3]
-
-#     if container == "container":
-
-#         commands = container_run()
-
-#     if planner == "planner":
-
-#         planificador_run(commands=commands)
     
