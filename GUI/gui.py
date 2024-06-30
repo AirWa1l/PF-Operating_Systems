@@ -3,7 +3,7 @@ from tkinter import messagebox
 
 # Contenedor principal
 ventana = Tk()
-ventana.title("AppSO")
+ventana.title("JaGUI")
 ventana.geometry("500x400")  # Ajuste del tamaño de la ventana principal más pequeña
 
 # Frames
