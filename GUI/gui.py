@@ -162,6 +162,8 @@ def iniciar_sesion():
 def logout():
     global usuario_registrado
     usuario_registrado = False
+    username.set("")
+    password.set("")
     comandos.pack_forget()
     inicio.pack(expand=True, fill="both")
     ventana.update()
@@ -215,9 +217,6 @@ username_entry.place(x=270, y=90)
 password_entry.place(x=270, y=150)
 
 # Botones en el frame 'inicio'
-ingrCommandos = Button(inicio, text="Ingresar comandos", font=("Times New Roman", 14), relief="groove", command=abrir_ingresar_comando, width=15, height=1)
-ingrCommandos.place(x=270, y=200)
-
 registrar = Button(inicio, text="Registrar", font=("Times New Roman", 14), relief="groove", command=abrir_registro, width=15, height=1)
 registrar.place(x=270, y=240)
 
@@ -225,12 +224,14 @@ iniciar_sesion_btn = Button(inicio, text="Iniciar sesion", font=("Times New Roma
 iniciar_sesion_btn.place(x=270, y=280)
 
 # Botones en el frame 'comandos'
-botonHistorial = Button(comandos, text="Historial", command=mostrarhistorial, width=10, height=2, bg="orange")
+botonHistorial = Button(comandos, text="Historial", command=mostrarhistorial, width=15, height=2, bg="orange")
 botonHistorial.grid(row=1, column=0)
 
-# Botón para cerrar sesión
-logout_btn = Button(comandos, text="Log Out", command=logout, width=10, height=2, bg="red")
-logout_btn.grid(row=2, column=0)
+ingrCommandos = Button(comandos, text="Ingresar comandos", command=abrir_ingresar_comando, width=15, height=2, bg="dark salmon")
+ingrCommandos.grid(row=2, column=0)
+
+logout_btn = Button(comandos, text="Log Out", command=logout, width=15, height=2, bg="red")
+logout_btn.grid(row=3, column=0)
 
 # Botón en el frame 'historial'
 botonBackHistorial = Button(historial, text="Volver", command=devolverseComandos, width=10, height=2, bg="red")
