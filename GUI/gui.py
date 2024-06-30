@@ -51,29 +51,34 @@ def iniciar():
 
 # Abre una ventana para poder registrar el usuario
 def abrir_registro():
-    miVentana = Toplevel()
-    miVentana.geometry("400x400")
-    miVentana.title("Registro de usuario")
-    miVentana.resizable(False, False)
-    miVentana.config(background="cyan2")
+    # Elimina todos los widgets dentro del frame 'inicio'
+    for widget in inicio.winfo_children():
+        widget.destroy()
     
-    main_tittle = Label(miVentana, text="Registro base de comandos", font=("Times New Roman", 15), bg="gray26", fg="Black", width=60, height=2)
-    main_tittle.pack()
+    # Crea los nuevos widgets de registro en el frame 'inicio'
+    main_title = Label(inicio, text="Registro base de comandos", font=("Times New Roman", 15), bg="gray26", fg="Black", width=60, height=2)
+    main_title.pack()
 
-    username_label_reg = Label(miVentana, text="Usuario", bg="white")
+    username_label_reg = Label(inicio, text="Usuario", bg="white")
     username_label_reg.place(x=50, y=100)
-    password_label_reg = Label(miVentana, text="Contrasena", bg="white")
-    password_label_reg.place(x=50, y=150)
+    correo_label_reg = Label(inicio, text="Correo", bg="white")
+    correo_label_reg.place(x=50, y=150)
+    password_label_reg = Label(inicio, text="Contraseña", bg="white")
+    password_label_reg.place(x=50, y=200)
+    
     username_reg = StringVar()
     password_reg = StringVar()
+    correo_label_reg = StringVar()
 
-    username_entry_reg = Entry(miVentana, textvariable=username_reg, width=20)
-    password_entry_reg = Entry(miVentana, textvariable=password_reg, width=20, show="*")
+    username_entry_reg = Entry(inicio, textvariable=username_reg, width=20)
+    correo_entry_reg = Entry(inicio, textvariable=correo_label_reg, width=20)
+    password_entry_reg = Entry(inicio, textvariable=password_reg, width=20, show="*")
 
     username_entry_reg.place(x=150, y=100)
-    password_entry_reg.place(x=150, y=150)
+    correo_entry_reg.place(x=150, y=150)
+    password_entry_reg.place(x=150, y=200)
     
-    # Guarda usuarios en "Usuarios.txt"
+    # Función para guardar usuario en "Usuarios.txt"
     def guardar_usuario():
         username_data = username_reg.get()
         password_data = password_reg.get()
@@ -82,13 +87,22 @@ def abrir_registro():
             newfile.write(username_data + "\n")
             newfile.write(password_data + "\n")
 
-        print(username_data, "\t", password_data, "\t")
+        print(username_data, "\t", password_data)
 
-        miVentana.destroy()
-        ventana_confirmacion()
+        # Reinicia el frame 'inicio' después de guardar
+        inicio.pack()
 
-    registrar_btn = Button(miVentana, text="Registrar", command=guardar_usuario, width=8, height=2, bg="green")
-    registrar_btn.place(x=150, y=200)
+    def volver_sin_mas():
+        # Reinicia el frame
+        inicio.pack()
+
+    registrar_btn = Button(inicio, text="Registrar", command=guardar_usuario, width=8, height=2, bg="green")
+    registrar_btn.place(x=150, y=250)
+
+    cancelar_btn = Button(inicio, text="Cancelar", command=volver_sin_mas, width=8, height=2, bg="red")
+    cancelar_btn.place(x=250, y=250)
+
+    ventana.update()
 
 # Abre una nueva ventana confirmando el proceso de registro
 def ventana_confirmacion():
@@ -148,7 +162,7 @@ def abrir_ingresar_comando():
     guardar_btn.place(x=10, y=305)
 
     comandos_listbox_label = Label(comandos, text="Lista de Comandos", bg="lightblue")
-    comandos_listbox_label.place(x=280, y=10)
+    comandos_listbox_label.place(x=290, y=10)
 
     comandos_listbox = Listbox(comandos, width=34, height=18)
     comandos_listbox.place(x=210, y=50)
