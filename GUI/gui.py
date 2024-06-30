@@ -102,6 +102,11 @@ def ventana_confirmacion():
     confirm_label = Label(confirmVentana, text="Registro Exitoso", font=("Times New Roman", 15), bg="gray26", fg="Black", width=60, height=2)
     confirm_label.pack()
 
+# Definiremos una funcion que valide que solo lo ingresado en los campos de
+# numeros como stTime y esTime sean solo valores numericos
+def validar_entry(text):
+    return text.isdigit() or text == ""
+
 # Permite el inicio de los comandos y guardarlos
 def abrir_ingresar_comando():
     ventanaComandos = Toplevel()
@@ -114,6 +119,23 @@ def abrir_ingresar_comando():
     comando_label.pack(pady=10)
     comando_entry = Entry(ventanaComandos, width=50)
     comando_entry.pack(pady=10)
+
+    stTime_label = Label(ventanaComandos, text="Tiempo Inicio", bg= "lightblue")
+    stTime_label.pack(pady=10)
+    stTime_entry = Entry(ventanaComandos, width=50)
+    stTime_entry.pack(pady=10)
+
+    esTime_label = Label(ventanaComandos, text="Tiempo estimado", bg="lightblue")
+    esTime_label.pack(pady=10)
+    esTime_entry = Entry(ventanaComandos, width=50)
+    esTime_entry.pack(pady=10)
+
+    # Registra la funcion creada
+    vcmd = (ventanaComandos.register(validar_entry), '%P')
+
+    # Aplicamos la validacion a stTime y esTime
+    stTime_entry.config(validate='key', validatecommand=vcmd)
+    esTime_entry.config(validate='key', validatecommand=vcmd)
 
     def guardar_comando():
         comando = comando_entry.get().strip()
