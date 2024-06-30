@@ -185,6 +185,7 @@ def logout():
     global usuario_registrado
     usuario_registrado = False
     username.set("")
+    correo.set("")
     password.set("")
     comandos.pack_forget()
     inicio.pack(expand=True, fill="both")
@@ -226,34 +227,44 @@ integrantes_list.grid(row=2, column=1, padx=10, pady=10, sticky="nsew")
 # Ingresar datos de usuario en el frame inicio
 username_label = Label(inicio, text="Usuario", bg="white")
 username_label.place(x=320, y=60)
+
+correo_label = Label(inicio, text="Correo", bg= "white")
+correo_label.place(x=325, y=120)
+
 password_label = Label(inicio, text="Contraseña", bg="white")
-password_label.place(x=310, y=120)
+password_label.place(x=310, y=180)
 
 username = StringVar()
+correo = StringVar()
 password = StringVar()
 
 username_entry = Entry(inicio, textvariable=username, width=20)
+correo_entry = Entry(inicio, textvariable=correo, width=20)
 password_entry = Entry(inicio, textvariable=password, width=20, show="*")
 
 username_entry.place(x=270, y=90)
-password_entry.place(x=270, y=150)
+correo_entry.place(x=270, y=150)
+password_entry.place(x=270, y=210)
 
 # Botones en el frame 'inicio'
 registrar = Button(inicio, text="Registrar", font=("Times New Roman", 14), relief="groove", command=abrir_registro, width=15, height=1)
-registrar.place(x=270, y=240)
+registrar.place(x=270, y=260)
 
 iniciar_sesion_btn = Button(inicio, text="Iniciar sesion", font=("Times New Roman", 14), relief="groove", command=iniciar_sesion, width=15, height=1)
-iniciar_sesion_btn.place(x=270, y=280)
+iniciar_sesion_btn.place(x=270, y=300)
 
 # Botones en el frame 'comandos'
-botonHistorial = Button(comandos, text="Historial", command=mostrarhistorial, width=15, height=2, bg="orange")
-botonHistorial.grid(row=1, column=0)
+bot_fram_ad = Frame(comandos)
+bot_fram_ad.pack(expand=True)
 
-ingrCommandos = Button(comandos, text="Ingresar comandos", command=abrir_ingresar_comando, width=15, height=2, bg="dark salmon")
-ingrCommandos.grid(row=2, column=0)
+botonHistorial = Button(bot_fram_ad, text="Historial", command=mostrarhistorial, width=15, height=2, bg="orange")
+botonHistorial.pack(pady=5)
 
-logout_btn = Button(comandos, text="Log Out", command=logout, width=15, height=2, bg="red")
-logout_btn.grid(row=3, column=0)
+ingrCommandos = Button(bot_fram_ad, text="Ingresar comandos", command=abrir_ingresar_comando, width=15, height=2, bg="dark salmon")
+ingrCommandos.pack(pady=5)
+
+logout_btn = Button(bot_fram_ad, text="Log Out", command=logout, width=15, height=2, bg="red")
+logout_btn.pack(pady=5)
 
 # Botón en el frame 'historial'
 botonBackHistorial = Button(historial, text="Volver", command=devolverseComandos, width=10, height=2, bg="red")
