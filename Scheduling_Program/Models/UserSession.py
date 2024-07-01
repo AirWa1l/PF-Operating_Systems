@@ -26,11 +26,10 @@ class UserSession:
         data = {"email": username, "password": password}
         response = requests.post(url, json=data)
         if response.status_code == 200:
-            self.token = response.json().get("tokenString")#.get("Claims").get()
+            self.token = response.json().get("tokenString")
             self.id = response.json().get("token").get("Claims").get("user_id")
             self.nick_name = response.json().get("token").get("Claims").get("user_nickname")
             print("Authentication accept")
-            #print(self.id)
             return True
         else:
             print("Authentication failed")
@@ -105,6 +104,27 @@ class UserSession:
         else:
 
             return False
+    
+    def delete_execution(self,id_exec):
+        
+        url = "http://localhost:3000/Usuarios/eliminar/ejecución"
+
+        data = {"uid":self.id,"eid":id_exec}
+
+        headers = {
+            "Authorization": f"Bearer {self.token}"
+        }
+        cookies = {
+            "token": self.token
+        }
+
+        response = requests.delete(url = url, json = data, cookies = cookies, headers = headers)
+
+        if response.json().get("State") == 204 and response.json().get("success") == True:
+
+            return True
+        
+        return False
 
 
     def update_profile(self,username = "default",email = "default",password = "default"):
@@ -146,7 +166,6 @@ class UserSession:
 
         return False
 
-
     def get_user_executions(self):
         if not self.is_authenticated():
             print("User is not authenticated")
@@ -165,11 +184,10 @@ class UserSession:
 
         if response.status_code == 200 and response.json().get("success") == True:
             executions = response.json().get("Procesos")
-            #alg = response.json().get("Procesos").get()
-            #print(executions)
+
             return executions
         else:
-            #print("Failed to fetch executions")
+
             return False
         
     def log_out(self):
@@ -190,8 +208,8 @@ class UserSession:
                 try:
                     json_response = response.json()
                     if json_response.get("success"):
-                        #print(json_response.get("message"))
-                        self.token = None  # Limpiar el token en el cliente
+                        self.token = None  
+
                         return True
                     else:
                         print("Logout failed. Success flag is false.")
@@ -221,7 +239,7 @@ class UserSession:
         response = requests.post(url=url, json=data,headers=headers,cookies=cookies)
 
         json = response.json()
-        #print(json)
+
         if response.status_code == 200 and json.get("success") == True and json.get("State") == 200:
 
             return (json.get("Image").get("ImagenID"),json.get("Image").get("ImagenName"),json.get("Image").get("ImagenUsed"))
@@ -260,13 +278,13 @@ class UserSession:
         """
         if command.find(" ") != -1:
             command_replace_spaces = command.replace(" ","")
-        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")) # , "..", ".."
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")) 
         dockerfiles_dir = os.path.join(project_root, "Dockerfiles")
         os.makedirs(dockerfiles_dir, exist_ok=True)  
         dockerfile_path = os.path.join(dockerfiles_dir, f"dockerfile_{command_replace_spaces}")
         with open(dockerfile_path, "w") as f:
             f.write(dockerfile_content)
-        #print(dockerfile_path)
+
         return (dockerfiles_dir,f"dockerfile_{command_replace_spaces}",f"dockerfile_{command_replace_spaces}:latest")
     
     def get_image_name_and_tag(self, image_id):
@@ -278,29 +296,27 @@ class UserSession:
                 name_and_tag_tuple = (name, tag)
             return name_and_tag_tuple
         except docker.errors.ImageNotFound:
-            #print(f"Image with ID {image_id} not found")
+
             return None
 
     def build_image(self,path,dockerfile_name,tag):
         
         try:
-            #print(f"Building image from {path} with tag {tag}")
+
             image, _ =  self.client.images.build(path=path, dockerfile=dockerfile_name, tag=tag)
-            #print(f"Image {tag} built successfully.")
-            #print(image.id)
+            
             return image.id
         except docker.errors.BuildError as e:
             print(f"Error building image: {e}")
             return None
 
     def evaluate_images_in_os(self,data :dict):
-        #print("err 1")
+
         dict_to_return = {}
         for process,image in data.items():
-            #print("err 2")
-            #print(image) # Esta enviando un boleano
+
             img = self.evaluate_image_in_os(image[0])
-            #print("err 3")
+
             if not img:
                 dockerfile = self.c_dockerfile(process[0])
 
@@ -314,7 +330,7 @@ class UserSession:
                 reponse = self.set_image(process=process,imagen=data)
 
                 if not reponse:
-                    #print("error")
+
                     return
                 
                 dict_to_return[process[0]] = (image_id,values[1],values[0])
@@ -342,7 +358,6 @@ class UserSession:
 
         json = response.json()
 
-        #print(json)
 
         if response.status_code == 200 and json.get("success") == True and json.get("State") == 201:
 
@@ -352,27 +367,20 @@ class UserSession:
             urlP = "http://localhost:3000/Usuarios/crear/proceso"
             for command,time_start,time_estimated in processes:
 
-                #print(command,time_start,time_estimated)
-
                 data = {"comando":command,"tiempo_inicio":time_start,"tiempo_estimado":time_estimated}
 
                 response = requests.post(url=urlP,json=data,headers=headers,cookies=cookies)
 
                 json = response.json()
-                #print(json)
 
                 if response.status_code == 200 and response.json().get("success") == True and response.json().get("Status") == 201:
 
                     id_processes.append(response.json().get("ID"))
 
-                    #print(id_processes)
-
                     parameter = self.get_image(command)
-
 
                     if parameter == False:
 
-                        
                         ruta,dockerfile,tag = self.c_dockerfile(command=command)
 
                         image_id = self.build_image(path=ruta,dockerfile_name=dockerfile,tag=tag)
@@ -398,11 +406,11 @@ class UserSession:
                         dict_to_images_id[(command,response.json().get("ID"))] = parameter
 
                 else:
-                    #print(response.json().get("message"))
+
                     return
 
         else:
-            #print(json.get("message"))
+
             return
         
         urlM = "http://localhost:3000/Usuarios/match/proceso_ejecución"
@@ -413,19 +421,8 @@ class UserSession:
             response = requests.post(url=urlM,json=data,headers=headers,cookies=cookies)
 
             json = response.json()
-            #print(json)
-            """
-            if response.status_code == 200 and json.get("State") == 201:
 
-                print(json.get("message"))
-
-            else:
-
-                print(json.get("message")) 
-                return
-            """
-        #print(dict_to_images_id)
         dict_to_return =  self.evaluate_images_in_os(data=dict_to_images_id)
 
         return dict_to_return
-      
+    

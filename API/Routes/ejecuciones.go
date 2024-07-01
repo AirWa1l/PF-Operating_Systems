@@ -53,7 +53,7 @@ func DeleteExecution(exec models.Ejecución, db *gorm.DB, w http.ResponseWriter)
 		return
 	}
 
-	if err := transaction.Delete(&exec).Error; err != nil {
+	if err := transaction.Unscoped().Delete(&exec).Error; err != nil {
 		transaction.Rollback()
 		throwError(err, http.StatusInternalServerError, w)
 		return

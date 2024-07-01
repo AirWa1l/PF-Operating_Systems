@@ -298,7 +298,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transaction.Delete(&user).Error; err != nil {
+	if err := transaction.Unscoped().Delete(&user).Error; err != nil {
 		transaction.Rollback()
 		throwError(err, http.StatusNotFound, w)
 		return
@@ -485,7 +485,7 @@ func Clean(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transaction.Where("ejecucion.uid = ?", request.ID).Delete(&models.Ejecución{}).Error; err != nil {
+	if err := transaction.Where("ejecucion.uid = ?", request.ID).Unscoped().Delete(&models.Ejecución{}).Error; err != nil {
 		transaction.Rollback()
 		throwError(err, http.StatusInternalServerError, w)
 		return
@@ -506,40 +506,6 @@ func Clean(w http.ResponseWriter, r *http.Request) {
 
 }
 
-/*
-	func GenerateImage(w http.ResponseWriter, r *http.Request) {
-		var proceso models.Proceso
-
-		err := json.NewDecoder(r.Body).Decode(&proceso)
-
-		if err != nil {
-			throwError(err, http.StatusBadRequest, w)
-			return
-		}
-
-		transaction := config.Db.Begin()
-
-		if err := transaction.Error; err != nil {
-			transaction.Rollback()
-			throwError(err, http.StatusInternalServerError, w)
-			return
-		}
-
-		if err := transaction.Table("proceso").First(&proceso).Error; err != nil {
-			transaction.Rollback()
-			throwError(err, http.StatusNotFound, w)
-			return
-		}
-
-		if err := transaction.Commit().Error; err != nil {
-			transaction.Rollback()
-			throwError(err, http.StatusInternalServerError, w)
-			return
-		}
-
-		CreateImage(proceso, config.Db, w, r)
-	}
-*/
 func GenerateGetImageID(w http.ResponseWriter, r *http.Request) {
 
 	var request forms.SearchCommand

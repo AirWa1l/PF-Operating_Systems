@@ -209,7 +209,6 @@ def round_robin(commands, dict_of_images, quantum=2):
     
     avg_turnaround_time = total_turnaround_time / len(burst_times)
     avg_response_time = total_response_time / len(burst_times)
-    #print(f"Round Robin - Average Turnaround Time: {avg_turnaround_time}, Average Response Time: {avg_response_time}")
 
     print(f"average turnaround times: {avg_turnaround_time}")
     print(f"average response times: {avg_response_time}")
