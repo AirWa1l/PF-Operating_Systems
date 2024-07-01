@@ -10,21 +10,19 @@ ventana.geometry("500x400")  # Ajuste del tamaño de la ventana principal más p
 inicio = Frame(ventana, borderwidth=3)
 comandos = Frame(ventana, borderwidth=3)
 historial = Frame(ventana, borderwidth=3)
-historial_abajo = Frame(ventana, borderwidth=3)
-historial_derecha = Frame(ventana, borderwidth=3)
+registro_frame = Frame(ventana, borderwidth=3)
+
+# Se pone historial para cargar la Listbox de comandos
+historial.pack()
+historial.pack_forget()
+
 inicio.pack(expand=True, fill="both")
 
-# Definición de tamaño de row y columns
-inicio.rowconfigure(0, minsize=30)
-inicio.rowconfigure(1, minsize=50)
-inicio.rowconfigure(2, minsize=10)
-inicio.columnconfigure(0, minsize=30)
-inicio.columnconfigure(1, minsize=50)
-inicio.columnconfigure(2, minsize=50)
 
 # Variables globales
 usuario_registrado = False
 comandos_lista = []
+historial_Listbox = None  # Variable global para el Listbox del historial
 
 # Funciones
 def center_window(window, width, height):
@@ -52,32 +50,34 @@ def iniciar():
 # Abre una ventana para poder registrar el usuario
 def abrir_registro():
     # Elimina todos los widgets dentro del frame 'inicio'
-    for widget in inicio.winfo_children():
-        widget.destroy()
+    inicio.pack_forget()
+    registro_frame.pack(expand=True, fill="both")
     
     # Crea los nuevos widgets de registro en el frame 'inicio'
-    main_title = Label(inicio, text="Registro base de comandos", font=("Times New Roman", 15), bg="gray26", fg="Black", width=60, height=2)
+    main_title = Label(registro_frame, text="Registro base de comandos", font=("Times New Roman", 15), bg="gray26", fg="Black", width=60, height=2)
     main_title.pack()
 
-    username_label_reg = Label(inicio, text="Usuario", bg="white")
+    username_label_reg = Label(registro_frame, text="Usuario", bg="white")
     username_label_reg.place(x=50, y=100)
-    correo_label_reg = Label(inicio, text="Correo", bg="white")
+    correo_label_reg = Label(registro_frame, text="Correo", bg="white")
     correo_label_reg.place(x=50, y=150)
-    password_label_reg = Label(inicio, text="Contraseña", bg="white")
+    password_label_reg = Label(registro_frame, text="Contraseña", bg="white")
     password_label_reg.place(x=50, y=200)
     
+    global username_reg, password_reg, correo_entry_reg
     username_reg = StringVar()
     password_reg = StringVar()
     correo_label_reg = StringVar()
 
-    username_entry_reg = Entry(inicio, textvariable=username_reg, width=20)
-    correo_entry_reg = Entry(inicio, textvariable=correo_label_reg, width=20)
-    password_entry_reg = Entry(inicio, textvariable=password_reg, width=20, show="*")
+    username_entry_reg = Entry(registro_frame, textvariable=username_reg, width=20)
+    correo_entry_reg = Entry(registro_frame, textvariable=correo_label_reg, width=20)
+    password_entry_reg = Entry(registro_frame, textvariable=password_reg, width=20, show="*")
 
     username_entry_reg.place(x=150, y=100)
     correo_entry_reg.place(x=150, y=150)
     password_entry_reg.place(x=150, y=200)
     
+
     # Función para guardar usuario en "Usuarios.txt"
     def guardar_usuario():
         username_data = username_reg.get()
@@ -86,20 +86,24 @@ def abrir_registro():
         with open("Usuarios.txt", "w") as newfile:
             newfile.write(username_data + "\n")
             newfile.write(password_data + "\n")
-
         print(username_data, "\t", password_data)
 
-        # Reinicia el frame 'inicio' después de guardar
-        inicio.pack()
+        # Cambiamos los frames
+        registro_frame.pack_forget()
+        inicio.pack(expand=True, fill="both")
 
     def volver_sin_mas():
-        # Reinicia el frame
-        inicio.pack()
+     # Esconder el frame de registro
+        registro_frame.pack_forget()
 
-    registrar_btn = Button(inicio, text="Registrar", command=guardar_usuario, width=8, height=2, bg="green")
+    # Mostrar el frame de inicio
+        inicio.pack(expand=True, fill="both")
+        ventana.update()
+
+    registrar_btn = Button(registro_frame, text="Registrar", command=guardar_usuario, width=8, height=2, bg="green")
     registrar_btn.place(x=150, y=250)
 
-    cancelar_btn = Button(inicio, text="Cancelar", command=volver_sin_mas, width=8, height=2, bg="red")
+    cancelar_btn = Button(registro_frame, text="Cancelar", command=volver_sin_mas, width=8, height=2, bg="red")
     cancelar_btn.place(x=250, y=250)
 
     ventana.update()
@@ -120,6 +124,7 @@ def ventana_confirmacion():
 def validar_entry(text):
     return text.isdigit() or text == ""
 
+
 # Permite el inicio de los comandos y guardarlos
 def abrir_ingresar_comando():
     for widget in comandos.winfo_children():
@@ -129,6 +134,7 @@ def abrir_ingresar_comando():
 
     comando_label = Label(comandos, text="Ingrese el comando", bg="lightblue")
     comando_label.place(x=40, y=10)
+    global comando_entry
     comando_entry = Entry(comandos, width=23)
     comando_entry.place(x=10, y=40)
 
@@ -150,32 +156,63 @@ def abrir_ingresar_comando():
     stTime_entry.config(validate='key', validatecommand=vcmd)
     esTime_entry.config(validate='key', validatecommand=vcmd)
 
+    
+
     def guardar_comando():
-        comando = comando_entry.get().strip()
+        global comando
+        comando = comando_entry.get().strip()    
         if comando:
             comandos_lista.append(comando)
             comando_entry.delete(0, END)
             actualizar_lista_comandos()
+            actualizar_historial_comandos()
             print(comandos_lista)  # Para ver los comandos guardados en la consola
 
+            
     guardar_btn = Button(comandos, text="Guardar comando", command=guardar_comando, bg="green", fg="white", width=20)
     guardar_btn.place(x=10, y=305)
 
+    global comandos_listbox
+    global comandos_listbox_label
     comandos_listbox_label = Label(comandos, text="Lista de Comandos", bg="lightblue")
     comandos_listbox_label.place(x=290, y=10)
-
     comandos_listbox = Listbox(comandos, width=34, height=18)
     comandos_listbox.place(x=210, y=50)
 
     def actualizar_lista_comandos():
         comandos_listbox.delete(0, END)
+        
         for comando in comandos_lista:
             comandos_listbox.insert(END, comando)
+        
 
     cerrar_btn = Button(comandos, text="Cerrar", command=volver_a_comandos, bg="red", fg="white", width=20)
     cerrar_btn.place(x=10, y=345)
 
     ventana.update()
+
+def actualizar_historial_comandos():
+    global historial_Listbox
+    if historial_Listbox is None:
+        historial_Listbox = Listbox(historial)
+        historial_Listbox.place(x=20, y=70)
+
+    historial_Listbox.delete(0, END)
+    for comando in comandos_lista:
+        historial_Listbox.insert(END, comando)
+    
+    ventana.update()
+
+# Logica del historial
+def mostrarhistorial():
+    comandos.pack_forget()
+    historial.pack(expand=True, fill="both")
+
+    seleccionar_algoritmo = Label(historial, text="Seleccionar algoritmo", font=("Times New Roman", 14), fg="black")
+    seleccionar_algoritmo.place(x=260,y=100)
+
+    ventana.update()
+    print("Entraste al historial")
 
 def volver_a_comandos():
     for widget in comandos.winfo_children():
@@ -194,6 +231,7 @@ def volver_a_comandos():
     logout_btn.pack(pady=5)
 
     ventana.update()
+
 
 # Permite el inicio de sesión si el usuario ya está registrado
 def iniciar_sesion():
@@ -228,19 +266,10 @@ def logout():
     ventana.update()
     print("Cerraste sesión")
 
-def mostrarhistorial():
-    comandos.pack_forget()
-    historial.pack()
-    historial_abajo.pack(side="left")
-    historial_derecha.pack()
-    ventana.update()
-    print("Entraste al historial")
 
 def devolverseComandos():
     historial.pack_forget()
-    historial_abajo.pack_forget()
-    historial_derecha.pack_forget()
-    comandos.pack()
+    comandos.pack(expand=True, fill="both")
     ventana.update()
     print("Volviste a comandos")
 
@@ -251,14 +280,18 @@ center_window(ventana, 500, 400)  # Centrar la ventana principal con las nuevas 
 bienvenida = Label(inicio, text="Bienvenido a la app", font=("Times New Roman", 18), fg="red")
 integrantes = Label(inicio, text="Developers", font=("Times New Roman", 14), fg="black")
 
-integrantes_list = Listbox(inicio)
-nombres = ["Juan Pinto", "Calle", "Adrian marin", "Franccesco", "Mafla"]
+nombres = ["Juan Pinto", "Juan Calle", "Adrian marin", "Franccesco", "Juan Mafla"]
+integrantes_list = Listbox(inicio, width=15, height=len(nombres), font=("Arial", 12), justify=CENTER)
+
 for name in nombres:
+    espacios = (30 - len(nombres)) // 2
+    elemento_centralizado = f"{' ' * espacios}{nombres}"
     integrantes_list.insert(END, name)
 
-bienvenida.grid(row=0, column=2, padx=35, pady=10, sticky="nsew")
-integrantes.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
-integrantes_list.grid(row=2, column=1, padx=10, pady=10, sticky="nsew")
+bienvenida.config()
+bienvenida.place(x=150,y=0)
+integrantes.place(x=40,y=70)
+integrantes_list.place(x=15,y=100)
 
 # Ingresar datos de usuario en el frame inicio
 username_label = Label(inicio, text="Usuario", bg="white")
@@ -278,9 +311,9 @@ username_entry = Entry(inicio, textvariable=username, width=20)
 correo_entry = Entry(inicio, textvariable=correo, width=20)
 password_entry = Entry(inicio, textvariable=password, width=20, show="*")
 
-username_entry.place(x=270, y=90)
-correo_entry.place(x=270, y=150)
-password_entry.place(x=270, y=210)
+username_entry.place(x=280, y=90)
+correo_entry.place(x=280, y=150)
+password_entry.place(x=280, y=210)
 
 # Botones en el frame 'inicio'
 registrar = Button(inicio, text="Registrar", font=("Times New Roman", 14), relief="groove", command=abrir_registro, width=15, height=1)
@@ -304,6 +337,6 @@ logout_btn.pack(pady=5)
 
 # Botón en el frame 'historial'
 botonBackHistorial = Button(historial, text="Volver", command=devolverseComandos, width=10, height=2, bg="red")
-botonBackHistorial.grid(row=0, column=0)
+botonBackHistorial.place(x=210,y=0)
 
 ventana.mainloop()
