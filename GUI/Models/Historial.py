@@ -26,6 +26,8 @@ class Historial:
 
         self.botonBackHistorial = Button(self.frame, text="Volver", command=self.volver_a_comandos, width=10, height=1, bg="red")
         self.botonBackHistorial.pack(pady=5)
+        self.botonRepetirComando = Button(self.frame, text="Repetir", command=self.repetir_comando_seleccionado , width=10, height=1, bg="green")
+        self.botonRepetirComando.pack(pady=5)
 
     def show(self):
         self.gui.comandos.hide()
@@ -58,3 +60,22 @@ class Historial:
     def volver_a_comandos(self):
         self.hide()
         self.gui.comandos.show()
+
+    def repetir_comando_seleccionado(self):
+        comando_seleccionado = self.tree.selection()
+        if comando_seleccionado:
+            comando = self.tree.item(comando_seleccionado)
+            comando_values = comando["values"]
+            print(f"Repetir comando: {comando_values}")            
+            # Agregar Aqui la logica para que despliegue el
+            # nuevo frame :D "Aqui va la cosa, Calle y Pinto"
+        else:
+            self.mostrar_advertencia()
+
+    def mostrar_advertencia(self):
+        ventana_advertencia = Toplevel(self.ventana)
+        ventana_advertencia.title("Advertencia")
+        ventana_advertencia.geometry("300x100")
+        self.mensajito = Label(ventana_advertencia, text="No se ha seleccionado ningún comando", font=("Arial", 12))
+        self.mensajito.pack(expand=True)
+        self.ventana.after(1000, ventana_advertencia.destroy)
