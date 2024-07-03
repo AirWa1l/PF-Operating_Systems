@@ -8,13 +8,17 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..','..')))
 
 from Scheduling_Program.Models.UserSession import UserSession
+from Scheduling_Program.Algorithms.planificador import planificador_run
+
 
 class Historial:
     def __init__(self, ventana, gui, us_service : UserSession):
         self.ventana = ventana
         self.gui = gui
         self.us = us_service
-        self.frame = Frame(self.ventana, borderwidth=3)
+        self.frame = Frame(self.ventana,
+        borderwidth=3)
+        self.ejecuta = Ejecutar(self.ventana,self.gui,self.us)
         
         self.seleccionar_algoritmo = Label(self.frame, text="Seleccionar algoritmo", font=("Times New Roman", 14), fg="black")
         self.seleccionar_algoritmo.pack(pady=5)
@@ -85,7 +89,13 @@ class Historial:
             print(f"Repetir comando: {comando_values}")
         
         # Llamar al método abrir_ejecutar de la instancia de Comandos
-            self.gui.comandos.abrir_ejecutar()
+            #self.gui.comandos.abrir_ejecutar()
+            dic,commands = self.us.reused_user_executions(comando_values[1])
+            response = planificador_run(commands = commands,images = dic, algoritmo = comando_values[0])
+
+            self.ejecuta.mostrar_exec_hechas(commands = commands,response = response)
+
+            
         else:
             self.mostrar_advertencia()
 

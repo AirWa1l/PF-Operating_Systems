@@ -278,6 +278,8 @@ class UserSession:
         """
         if command.find(" ") != -1:
             command_replace_spaces = command.replace(" ","")
+        else:
+            command_replace_spaces = command
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")) 
         dockerfiles_dir = os.path.join(project_root, "Dockerfiles")
         os.makedirs(dockerfiles_dir, exist_ok=True)  
@@ -343,6 +345,7 @@ class UserSession:
         id_processes = []
         id_exec = 0
         dict_to_images_id = {}
+
         urlE = "http://localhost:3000/Usuarios/crear/ejecución"
 
         data = {"id":self.id,"algorithm":alg}

@@ -1,12 +1,21 @@
 # Models/Ejecutar.py
 from tkinter import *
+import sys
+import os
+from tkinter import messagebox
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..','..')))
+
+from Scheduling_Program.Algorithms.planificador import planificador_run
+from Scheduling_Program.Models.UserSession import UserSession
 
 class Ejecutar:
-    def __init__(self, ventana, gui):
+    def __init__(self, ventana, gui,us_service:UserSession):
         self.ventana = ventana
         self.gui = gui
         self.top = Toplevel(self.ventana)
         self.top.title("Ejecutar Comandos")
+        self.us = us_service
 
         self.frame = Frame(self.top, borderwidth=3)
         self.frame.pack(expand=True, fill="both")
@@ -32,6 +41,31 @@ class Ejecutar:
         self.boton_cerrar.pack(pady=5)
 
         self.actualizar_texto_comandos()
+    
+
+    def mostrar_exec_hechas(self,commands,response):
+        
+        for i in range(0,len(response["turnaround times"])):
+
+            self.text.insert(END, f" Comando : {commands[i][0]} - TAT : {response['turnaround times'][i]} - RT : {response['response times'][i]}\n")
+            self.text.insert(END,f"ATAT : {response['average turnaround times']} - ART : {response['average response times']}")
+    
+    def generar_resultados(self,commands,alg):
+        if not self.us.is_authenticated():
+            messagebox.showerror("Autenticación fallida","Correo o contraseña no validos")
+        else:
+            dic = self.us.set_execution(commands,alg = alg)
+
+            response = planificador_run(commands = commands,images = dic,algoritmo = alg) 
+
+            for i in range(0,len(response["turnaround times"])):
+
+                self.text.insert(END, f" Comando : {commands[i][0]} - TAT : {response['turnaround times'][i]} - RT : {response['response times'][i]}\n")
+            self.text.insert(END,f"ATAT : {response['average turnaround times']} - ART : {response['average response times']}")
+    
+    def hide(self):
+        self.frame.pack_forget()
+    
 
     def actualizar_texto_comandos(self):
         self.text.delete(1.0, END)

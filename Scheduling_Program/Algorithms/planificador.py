@@ -221,15 +221,20 @@ def round_robin(commands, dict_of_images, quantum=2):
 def planificador_run(commands, images ,algoritmo='fcfs', quantum=2):
     formatted_commands = [(command[0], int(command[1]), int(command[2])) for command in commands]
     if algoritmo == 'fcfs':
-        fcfs(formatted_commands,images)
+        v = fcfs(formatted_commands,images)
+        return v
     elif algoritmo == 'spn':
-        spn(formatted_commands,images)
+        v = spn(formatted_commands,images)
+        return v
     elif algoritmo == 'srt':
-        srt(formatted_commands,images)
+        v = srt(formatted_commands,images)
+        return v
     elif algoritmo == 'hrrn':
-        hrrn(formatted_commands,images)
+        v = hrrn(formatted_commands,images)
+        return v
     elif algoritmo == 'round_robin':
-        round_robin(formatted_commands, images,quantum)
+        v = round_robin(formatted_commands, images,quantum)
+        return v
     else:
         print("Algoritmo no soportado.")
 

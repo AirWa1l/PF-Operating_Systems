@@ -15,6 +15,7 @@ class Comandos:
         self.us = us_service
         self.frame = Frame(self.ventana, borderwidth=3)
         self.actual_command_list = list()
+        self.ejecuta = Ejecutar(self.ventana,self.gui,self.us)
         
         self.main_frame = Frame(self.frame)
         self.comando_frame = Frame(self.frame)
@@ -107,6 +108,7 @@ class Comandos:
         el algoritmo y usa la función de set_execution de la clase de UserSession,
         así genera la respuesta de la ejecución
         """
+        self.ejecuta.generar_resultados(self.actual_command_list,tipo_algoritmo)
         pass
         # Cada vez que se ejecute entonces se reinicia la lista de comandos a ejecutar
         self.actual_command_list = list()
@@ -135,7 +137,7 @@ class Comandos:
             self.stTime_entry.delete(0, END)
             self.esTime_entry.delete(0, END)
             self.actualizar_lista_comandos()
-            print(self.gui.comandos_lista)  # Para ver los comandos guardados en la consola
+            print(self.actual_command_list)  # Para ver los comandos guardados en la consola
 
     def generar_idp(self):
         return len(self.gui.comandos_lista) + 1  # Simplemente incrementa el IDP basado en la cantidad de comandos
@@ -146,7 +148,9 @@ class Comandos:
             self.comandos_listbox.insert(END, comando["comando"])
 
     def abrir_ejecutar(self):
-        Ejecutar(self.ventana, self.gui)
+        self.ejecuta.frame.pack(expand=True, fill="both")
+        self.ejecutar()
+        #Ejecutar(self.ventana, self.gui)
 
     def logout(self):
         self.hide()
