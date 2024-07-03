@@ -29,7 +29,6 @@ func Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var tokenStr string
 		cookie, err := r.Cookie("token")
-		print(r.Body)
 		if err == nil {
 			tokenStr = cookie.Value
 		} else {

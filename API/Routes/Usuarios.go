@@ -111,6 +111,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	var user models.Usuario
+
 	err := json.NewDecoder(r.Body).Decode(&user)
 
 	if err != nil {
@@ -167,8 +168,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		throwError(err, http.StatusBadRequest, w)
 		return
 	}
-
-	log.Println(request)
 
 	transaction := config.Db.Begin()
 
