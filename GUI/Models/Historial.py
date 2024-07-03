@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from Models.Ejecutar import Ejecutar
 
 class Historial:
     def __init__(self, ventana, gui):
@@ -66,9 +67,10 @@ class Historial:
         if comando_seleccionado:
             comando = self.tree.item(comando_seleccionado)
             comando_values = comando["values"]
-            print(f"Repetir comando: {comando_values}")            
-            # Agregar Aqui la logica para que despliegue el
-            # nuevo frame :D "Aqui va la cosa, Calle y Pinto"
+            print(f"Repetir comando: {comando_values}")
+        
+        # Llamar al método abrir_ejecutar de la instancia de Comandos
+            self.gui.comandos.abrir_ejecutar()
         else:
             self.mostrar_advertencia()
 
