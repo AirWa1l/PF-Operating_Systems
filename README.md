@@ -31,7 +31,7 @@ sobre la cual trataremos a continuación
    login mail password
    ```
 
-3. Podemos usar la palabra "get" para obtener todas las ejecuciones que ha hecho
+3. Podemos usar la palabra "gete" para obtener todas las ejecuciones que ha hecho
    la persona.
 
 4. Para ejecutar comandos de la propia terminal de linux usamos el comando "shell" junto al comando
