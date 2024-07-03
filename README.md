@@ -1,4 +1,4 @@
-<p align="center"> ***Manual de Usuario "Linea de comando"***</p>
+<p align="center"> Manual de Usuario "Linea de comando" </p>
 
 ## Tabla de Contenidos
 
@@ -20,15 +20,44 @@ sobre la cual trataremos a continuación
    reservada "register", y posteriormente ingresamos los datos "name", "mail" y
    "password" en ese exacto orden.
    
-   \```Consola
+   ```Consola
    register name mail password
-   \```
+   ```
 
 2. Ahora debemos logearnos con los datos anteriormente ingresados, junto con la
    palabra "login" de la siguiente manera:
 
-   \```Consola
+   ```Consola
    login mail password
-   \```
+   ```
 
-3. 
+3. Podemos usar la palabra "get" para obtener todas las ejecuciones que ha hecho
+   la persona.
+
+4. Para ejecutar comandos de la propia terminal de linux usamos el comando "shell" junto al comando
+   de Linux, o por otro lado tambien podemos usar "!" + el comando
+
+5. Usamos el comando "exec" el cual solo puede ser ejecutado una vez el usuario ya se encuentre
+   logueado en la app, este recibe 2 argumentos. Primero ejecuta el script donde tengamos los tiempos
+   de cada uno de los procesos y el algoritmo que queremos usar "fcfs, rr, srn, etc", este nos imprimira
+   los tiempos tomados para c/u de los comandos que hayamos ingresado.
+
+6. "Aclaracion" El chiste aqui es que creemos por medio del comando shell nuestro .txt y en
+   este hayamos agregado lo anteriormente mencionado, el comando y los tiempos de la siguiente forma:
+
+         * comando,tiempo de inicio,tiempo estimado  salto de linea
+
+   Es muy importante que siga esa estructura, con las comas incluidas, porque sino nos dará error
+
+7.  Por ultimo, podemos deslogearnos de la App por medio de la palabra "logout"
+8.  Salimos de la App con "exit"
+
+
+## Contribución
+
+Aplicacion Creada Por:
+- Juan Francesco García Vargas - 2310174
+- Juan Jose Mafla Pacheco - 2126990
+- Juan David Pinto Rodriguez - 2240440
+- Juan Fernando Calle Sanchez - 2127464
+- Jose Adrian Marin Ordoñez - 2126988
