@@ -4,12 +4,20 @@ from Models.Login import Login
 from Models.Register import Register
 from Models.Historial import Historial
 from Models.Comandos import Comandos
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..','..')))
+
+from Scheduling_Program.Models.UserSession import UserSession
+
 
 class GUI:
     def __init__(self):
         self.ventana = Tk()
         self.ventana.title("AppSO")
         self.ventana.geometry("600x400")
+        self.us = UserSession()
         
         self.usuario_registrado = False
         self.comandos_lista = []
@@ -27,11 +35,11 @@ class GUI:
         self.home.show()
         
     def initialize_components(self):
-        self.home = Home(self.ventana, self)
-        self.register = Register(self.ventana, self)
-        self.login = Login(self.ventana, self)
-        self.comandos = Comandos(self.ventana, self)
-        self.historial = Historial(self.ventana, self)
+        self.home = Home(self.ventana, self,us_service = self.us)
+        self.register = Register(self.ventana, self,us_service = self.us)
+        #self.login = Login(self.ventana, self,us_service = self.us)
+        self.comandos = Comandos(self.ventana, self,us_service = self.us)
+        self.historial = Historial(self.ventana, self,us_service = self.us)
         
     def center_window(self, width, height):
         screen_width = self.ventana.winfo_screenwidth()

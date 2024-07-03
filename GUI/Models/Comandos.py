@@ -1,10 +1,18 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..','..')))
+
 from tkinter import *
+from Scheduling_Program.Models.UserSession import UserSession
 
 class Comandos:
-    def __init__(self, ventana, gui):
+    def __init__(self, ventana, gui, us_service : UserSession):
         self.ventana = ventana
         self.gui = gui
+        self.us = us_service
         self.frame = Frame(self.ventana, borderwidth=3)
+        self.actual_command_list = list()
         
         self.main_frame = Frame(self.frame)
         self.comando_frame = Frame(self.frame)
@@ -84,14 +92,30 @@ class Comandos:
 
     def validar_entry(self, text):
         return text.isdigit() or text == ""
+    """
+    Aquí manda a la pestaña de ejecución el algoritmo,los procesos y la ejecución donde esta los recibe y usa el set_executions para procesar y mostrar.
+    """
+    def ejecutar(self):
+        tipo_algoritmo = self.tipo_algoritmo_entry.get().strip()
+        """Aquí entonces se inicia la otra interfaz, se manda la información de 
+        la lista donde estan los procesos, 
+        el algoritmo y usa la función de set_execution de la clase de UserSession,
+        así genera la respuesta de la ejecución
+        """
+        pass
+        # Cada vez que se ejecute entonces se reinicia la lista de comandos a ejecutar
+        self.actual_command_list = list()
 
     def guardar_comando(self):
-        tipo_algoritmo = self.tipo_algoritmo_entry.get().strip()
+        #tipo_algoritmo = self.tipo_algoritmo_entry.get().strip()
         comando = self.comando_entry.get().strip()
         tiempo_inicio = self.stTime_entry.get().strip()
         tiempo_estimado = self.esTime_entry.get().strip()
+
+        self.actual_command_list.append((comando,int(tiempo_inicio),int(tiempo_estimado)))
         
-        if tipo_algoritmo and comando and tiempo_inicio and tiempo_estimado:
+        if comando and tiempo_inicio and tiempo_estimado:
+            """
             nuevo_comando = {
                 "tipo_algoritmo": tipo_algoritmo,
                 "idp": self.generar_idp(),
@@ -99,8 +123,9 @@ class Comandos:
                 "tiempo_inicio": tiempo_inicio,
                 "tiempo_estimado": tiempo_estimado
             }
-            self.gui.comandos_lista.append(nuevo_comando)
-            self.tipo_algoritmo_entry.delete(0, END)
+            """
+            #self.gui.comandos_lista.append(nuevo_comando)
+            #self.tipo_algoritmo_entry.delete(0, END)
             self.comando_entry.delete(0, END)
             self.stTime_entry.delete(0, END)
             self.esTime_entry.delete(0, END)
@@ -118,6 +143,7 @@ class Comandos:
     def logout(self):
         self.hide()
         self.gui.home.show()
+        self.actual_command_list = list()
         self.gui.usuario_registrado = False
 
 

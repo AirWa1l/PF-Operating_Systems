@@ -1,9 +1,17 @@
-from tkinter import *
+from tkinter import Frame,Label,StringVar,Entry,Button,messagebox
+
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..','..')))
+
+from Scheduling_Program.Models.UserSession import UserSession
 
 class Register:
-    def __init__(self, ventana, gui):
+    def __init__(self, ventana, gui, us_service : UserSession):
         self.ventana = ventana
         self.gui = gui
+        self.us = us_service
         self.frame = Frame(self.ventana, borderwidth=3)
         
         self.main_title = Label(self.frame, text="Registro base de comandos", font=("Times New Roman", 15), bg="gray26", fg="Black", width=60, height=2)
@@ -42,6 +50,16 @@ class Register:
         self.frame.pack_forget()
 
     def guardar_usuario(self):
+
+        correct_registration = self.us.register(self.username_reg.get(),self.correo_reg.get(),self.password_reg.get())
+
+        if not correct_registration:
+            messagebox.showerror("Error de registro","No se ha podido registrar este usuario")
+        else:
+            messagebox.showinfo("Registro completo exitosamente","Se ha registrado su usuario de manera exitosa")
+        
+
+        """
         username_data = self.username_reg.get()
         password_data = self.password_reg.get()
 
@@ -49,6 +67,10 @@ class Register:
             newfile.write(username_data + "\n")
             newfile.write(password_data + "\n")
         print(username_data, "\t", password_data)
+
+        self.hide()
+        self.gui.home.show()
+        """
 
         self.hide()
         self.gui.home.show()
