@@ -5,6 +5,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..','..
 
 from tkinter import *
 from Scheduling_Program.Models.UserSession import UserSession
+from tkinter import ttk
+from Models.Ejecutar import Ejecutar  # Importar la nueva clase Ejecutar
 
 class Comandos:
     def __init__(self, ventana, gui, us_service : UserSession):
@@ -64,12 +66,15 @@ class Comandos:
         guardar_btn.place(x=10, y=260)
 
         self.comandos_listbox_label = Label(self.comando_frame, text="Lista de Comandos", bg="lightblue")
-        self.comandos_listbox_label.place(x=290, y=10)
+        self.comandos_listbox_label.place(x=250, y=10)
         self.comandos_listbox = Listbox(self.comando_frame, width=34, height=18)
         self.comandos_listbox.place(x=210, y=50)
 
         cerrar_btn = Button(self.comando_frame, text="Cerrar", command=self.cerrar_ingresar_comando, bg="red", fg="white", width=20)
         cerrar_btn.place(x=10, y=300)
+
+        ejecutar_btn = Button(self.comando_frame, text="Ejecutar", bg="#F4D03F", fg="white", width=20, command=self.abrir_ejecutar)
+        ejecutar_btn.place(x=10, y=340)
 
     def show(self):
         self.frame.pack(expand=True, fill="both")
@@ -140,10 +145,14 @@ class Comandos:
         for comando in self.gui.comandos_lista:
             self.comandos_listbox.insert(END, comando["comando"])
 
+    def abrir_ejecutar(self):
+        Ejecutar(self.ventana, self.gui)
+
     def logout(self):
         self.hide()
         self.gui.home.show()
         self.actual_command_list = list()
         self.gui.usuario_registrado = False
+
 
 
