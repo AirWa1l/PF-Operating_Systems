@@ -4,6 +4,7 @@ from Models.Login import Login
 from Models.Register import Register
 from Models.Historial import Historial
 from Models.Comandos import Comandos
+from Models.Ejecutar import Ejecutar
 import os
 import sys
 
@@ -36,10 +37,13 @@ class GUI:
         
     def initialize_components(self):
         self.home = Home(self.ventana, self,us_service = self.us)
+        self.ejecutar = Ejecutar(self.ventana,self,us_service = self.us)
         self.register = Register(self.ventana, self,us_service = self.us)
         #self.login = Login(self.ventana, self,us_service = self.us)
-        self.comandos = Comandos(self.ventana, self,us_service = self.us)
-        self.historial = Historial(self.ventana, self,us_service = self.us)
+        self.comandos = Comandos(self.ventana, self,us_service = self.us,ejecutar = self.ejecutar)
+        self.historial = Historial(self.ventana, self,us_service = self.us, ejecutar = self.ejecutar)
+
+        #self.ejecutar.hide()
         
     def center_window(self, width, height):
         screen_width = self.ventana.winfo_screenwidth()

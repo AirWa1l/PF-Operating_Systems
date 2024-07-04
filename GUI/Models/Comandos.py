@@ -9,14 +9,15 @@ from tkinter import ttk
 from Models.Ejecutar import Ejecutar  # Importar la nueva clase Ejecutar
 
 class Comandos:
-    def __init__(self, ventana, gui, us_service : UserSession):
+    def __init__(self, ventana, gui, us_service : UserSession,ejecutar):
         self.ventana = ventana
         self.gui = gui
         self.us = us_service
         self.frame = Frame(self.ventana, borderwidth=3)
         self.actual_command_list = list()
-        self.ejecuta = Ejecutar(self.ventana,self.gui,self.us)
-        
+        #self.ejecuta = Ejecutar(self.ventana,self.gui,self.us)
+        self.ejecuta = ejecutar
+
         self.main_frame = Frame(self.frame)
         self.comando_frame = Frame(self.frame)
         
@@ -113,6 +114,9 @@ class Comandos:
         # Cada vez que se ejecute entonces se reinicia la lista de comandos a ejecutar
         self.actual_command_list = list()
 
+        self.hide()
+        self.ejecuta.show()
+
     def guardar_comando(self):
         #tipo_algoritmo = self.tipo_algoritmo_entry.get().strip()
         comando = self.comando_entry.get().strip()
@@ -153,6 +157,7 @@ class Comandos:
         #Ejecutar(self.ventana, self.gui)
 
     def logout(self):
+        self.us.log_out()
         self.hide()
         self.gui.home.show()
         self.actual_command_list = list()

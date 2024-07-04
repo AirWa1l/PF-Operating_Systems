@@ -12,13 +12,13 @@ from Scheduling_Program.Algorithms.planificador import planificador_run
 
 
 class Historial:
-    def __init__(self, ventana, gui, us_service : UserSession):
+    def __init__(self, ventana, gui, us_service : UserSession,ejecutar):
         self.ventana = ventana
         self.gui = gui
         self.us = us_service
         self.frame = Frame(self.ventana,
         borderwidth=3)
-        self.ejecuta = Ejecutar(self.ventana,self.gui,self.us)
+        self.ejecuta = ejecutar
         
         self.seleccionar_algoritmo = Label(self.frame, text="Seleccionar algoritmo", font=("Times New Roman", 14), fg="black")
         self.seleccionar_algoritmo.pack(pady=5)
@@ -59,7 +59,6 @@ class Historial:
         current_idp = None
         #print(comandos_lista)
         for key,value in comandos_lista.items():
-            print(value)
             procesos = value['Processes']
             alg = value["Algoritmh"]
             if key != current_idp:
@@ -77,11 +76,16 @@ class Historial:
         # Aplicar tags para las líneas divisoras
         self.tree.tag_configure("line_separator", background="gray")
 
+
+
     def volver_a_comandos(self):
         self.hide()
         self.gui.comandos.show()
 
     def repetir_comando_seleccionado(self):
+
+        ##self.ejecuta.text.insert("")
+
         comando_seleccionado = self.tree.selection()
         if comando_seleccionado:
             comando = self.tree.item(comando_seleccionado)
@@ -98,6 +102,8 @@ class Historial:
             
         else:
             self.mostrar_advertencia()
+        self.hide()
+        self.ejecuta.show()
 
     def mostrar_advertencia(self):
         ventana_advertencia = Toplevel(self.ventana)

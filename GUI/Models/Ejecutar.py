@@ -13,12 +13,12 @@ class Ejecutar:
     def __init__(self, ventana, gui,us_service:UserSession):
         self.ventana = ventana
         self.gui = gui
-        self.top = Toplevel(self.ventana)
-        self.top.title("Ejecutar Comandos")
+        #self.top = Toplevel(self.ventana)
+        #self.top.title("Ejecutar Comandos")
         self.us = us_service
 
-        self.frame = Frame(self.top, borderwidth=3)
-        self.frame.pack(expand=True, fill="both")
+        self.frame = Frame(self.ventana, borderwidth=3)
+        #self.frame.pack(expand=True, fill="both")
 
         self.label = Label(self.frame, text="Command - Turnaround Time - Response Time", font=("Times New Roman", 14), fg="black")
         self.label.pack(pady=5)
@@ -37,20 +37,28 @@ class Ejecutar:
         self.scrollbar_x.pack(side=BOTTOM, fill=X)
         self.text.configure(xscrollcommand=self.scrollbar_x.set)
 
-        self.boton_cerrar = Button(self.frame, text="Cerrar", command=self.top.destroy, width=10, height=1, bg="red")
-        self.boton_cerrar.pack(pady=5)
+        self.boton_cerrar = Button(self.frame, text="Cerrar", command=self.volver_a_comandos, width=10, height=1, bg="red")
+        self.boton_cerrar.place(x = 240, y = 350) # pady=5
 
         self.actualizar_texto_comandos()
     
 
     def mostrar_exec_hechas(self,commands,response):
-        
+        self.text.delete(1.0,END)
         for i in range(0,len(response["turnaround times"])):
 
             self.text.insert(END, f" Comando : {commands[i][0]} - TAT : {response['turnaround times'][i]} - RT : {response['response times'][i]}\n")
-            self.text.insert(END,f"ATAT : {response['average turnaround times']} - ART : {response['average response times']}")
+
+        self.text.insert(END,f"ATAT : {response['average turnaround times']} - ART : {response['average response times']}")
+    
+    def show(self):
+        self.gui.home.hide()
+        self.frame.pack(expand=True, fill="both")
     
     def generar_resultados(self,commands,alg):
+
+        self.text.delete(1.0,END)
+
         if not self.us.is_authenticated():
             messagebox.showerror("Autenticación fallida","Correo o contraseña no validos")
         else:
@@ -61,12 +69,17 @@ class Ejecutar:
             for i in range(0,len(response["turnaround times"])):
 
                 self.text.insert(END, f" Comando : {commands[i][0]} - TAT : {response['turnaround times'][i]} - RT : {response['response times'][i]}\n")
+                
             self.text.insert(END,f"ATAT : {response['average turnaround times']} - ART : {response['average response times']}")
     
     def hide(self):
         self.frame.pack_forget()
-    
 
+    
+    def volver_a_comandos(self):
+        self.hide()
+        self.gui.historial.show()
+    
     def actualizar_texto_comandos(self):
         self.text.delete(1.0, END)
         for comando in self.gui.comandos_lista:
