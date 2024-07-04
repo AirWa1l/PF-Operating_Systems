@@ -1,0 +1,11 @@
+Package            Version
+------------------ --------
+certifi            2024.6.2
+charset-normalizer 3.3.2
+colorama           0.4.6
+docker             7.1.0
+idna               3.7
+pip                22.0.2
+requests           2.32.3
+setuptools         59.6.0
+urllib3            2.2.2
