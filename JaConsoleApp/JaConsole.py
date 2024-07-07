@@ -56,6 +56,7 @@ class JaConsoleApp(cmd.Cmd):
         """Log in with username and password."""
         if self.us.is_authenticated():
             print("User is already authenticated.")
+            return
         else:
             if args:
                 username, password = args.split()
@@ -78,8 +79,9 @@ class JaConsoleApp(cmd.Cmd):
     
     def do_clean(self,args):
         """Delete all the executions of the current user"""
-        if not self.us.is_authenticated():
+        if self.us.is_authenticated() == False:
             print("Not loggin")
+            return
 
         args = args.split()
 
@@ -105,8 +107,9 @@ class JaConsoleApp(cmd.Cmd):
 
     def do_pro(self,arg):
         """Show the name and email of the current user"""
-        if not self.us.is_authenticated():
+        if self.us.is_authenticated()== False:
             print("Not loggin")
+            return
 
         if len(arg) > 1:
             print("Use: pro")
@@ -126,8 +129,9 @@ class JaConsoleApp(cmd.Cmd):
         
     def do_edit(self,arg):
         """Update the email, password or nickname of the current user"""
-        if not self.us.is_authenticated():
+        if self.us.is_authenticated() == False:
             print("Not loggin")
+            return
 
         args = arg.split() # name <name> email <> password <>
 
@@ -173,8 +177,9 @@ class JaConsoleApp(cmd.Cmd):
     
     def do_rept(self,arg):
         """ Repeat an previus execution using any scheduling algorithm """
-        if not self.us.is_authenticated():
+        if self.us.is_authenticated() == False:
             print("Not loggin")
+            return
 
         args = arg.split()
 
@@ -199,8 +204,9 @@ class JaConsoleApp(cmd.Cmd):
     
     def do_exec(self,arg):
         """Generate an execution, with the processes the user want and execute with the specific scheduling algorithm"""
-        if not self.us.is_authenticated():
+        if self.us.is_authenticated() == False:
             print("Not loggin")
+            return
         try:
             args = arg.split()
             if len(args) != 2:
@@ -243,8 +249,9 @@ class JaConsoleApp(cmd.Cmd):
     
     def do_gete(self,args):
         """Show all the execution of the user, every process of any execution and the algorithm used"""
-        if not self.us.is_authenticated():
+        if self.us.is_authenticated() == False:
             print("Not loggin")
+            return
 
         execs = dict(self.us.get_user_executions())
         if execs == False:
@@ -270,7 +277,6 @@ class JaConsoleApp(cmd.Cmd):
 
 if __name__ == "__main__":
 
-    # For use the JaConsoleApp, init the script
     if len(sys.argv) > 1: 
         print("Start the script first")
 

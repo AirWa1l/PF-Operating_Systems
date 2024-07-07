@@ -312,35 +312,6 @@ class UserSession:
             print(f"Error building image: {e}")
             return None
 
-    def evaluate_images_in_os(self,data :dict):
-
-        dict_to_return = {}
-        for process,image in data.items():
-
-            img = self.evaluate_image_in_os(image[0])
-
-            if not img:
-                dockerfile = self.c_dockerfile(process[0])
-
-                image_id = self.build_image(path=dockerfile[0],tag=dockerfile[1])
-
-                if image_id != None:
-                    values = self.get_image_name_and_tag(image_id)
-
-                    data = {"imagen_id":image_id,"imagen_used":values[1],"imagen_name":values[0]}
-
-                reponse = self.set_image(process=process,imagen=data)
-
-                if not reponse:
-
-                    return
-                
-                dict_to_return[process[0]] = (image_id,values[1],values[0])
-            else:
-                dict_to_return[process[0]] = (image[0],image[1],image[2])
-
-        return dict_to_return
-
     def set_execution(self,processes:list,alg):
         id_processes = []
         id_exec = 0
@@ -376,13 +347,19 @@ class UserSession:
 
                 json = response.json()
 
+                #print(json)
+
                 if response.status_code == 200 and response.json().get("success") == True and response.json().get("Status") == 201:
 
                     id_processes.append(response.json().get("ID"))
 
                     parameter = self.get_image(command)
 
+                    #print(parameter)
+
                     if parameter == False:
+
+                        #print("hola")
 
                         ruta,dockerfile,tag = self.c_dockerfile(command=command)
 
@@ -402,11 +379,11 @@ class UserSession:
 
                         parameter = self.set_image((command,response.json().get("ID")),pata)
 
-                        dict_to_images_id[(command,response.json().get("ID"))] = parameter
+                        dict_to_images_id[command] = parameter
                     
                     else:
 
-                        dict_to_images_id[(command,response.json().get("ID"))] = parameter
+                        dict_to_images_id[command] = parameter
 
                 else:
 
@@ -425,7 +402,7 @@ class UserSession:
 
             json = response.json()
 
-        dict_to_return =  self.evaluate_images_in_os(data=dict_to_images_id)
+        #dict_to_return =  self.evaluate_images_in_os(data=dict_to_images_id)
 
-        return dict_to_return
+        return dict_to_images_id
     

@@ -65,7 +65,7 @@ type ProcesoxEjecución struct {
 	Pid uint `gorm:"column:pid;primaryKey;not null"`
 	Eid uint `gorm:"column:eid;primaryKey"`
 
-	Proceso   Proceso   `gorm:"foreignKey:pid;references:id;not null"`
+	Proceso   Proceso   `gorm:"foreignKey:pid;references:id;not null;OnDelete:CASCADE"`
 	Ejecución Ejecución `gorm:"foreignKey:eid;references:id;OnDelete:CASCADE"`
 }
 

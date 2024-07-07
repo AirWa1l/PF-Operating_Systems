@@ -484,7 +484,7 @@ func Clean(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transaction.Where("ejecucion.uid = ?", request.ID).Unscoped().Delete(&models.Ejecución{}).Error; err != nil {
+	if err := transaction.Where("ejecucion.uid = ?", request.ID).Delete(&models.Ejecución{}).Error; err != nil {
 		transaction.Rollback()
 		throwError(err, http.StatusInternalServerError, w)
 		return
