@@ -1,4 +1,4 @@
-<p align="center"> Manual de Usuario "Linea de comando" </p>
+<h1 align="center"> Manual de Usuario "Linea de comando" </h1>
 
 ## Tabla de Contenidos
 
