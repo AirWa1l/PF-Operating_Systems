@@ -2,7 +2,6 @@ package routes
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	config "github.com/Frank-Totti/PF-Operating_Systems/Config"
@@ -103,7 +102,7 @@ func GetProcessesByExec(w http.ResponseWriter, r *http.Request) {
 		"Match":     map_to_return,
 	}
 
-	log.Println(response)
+	//log.Println(response)
 
 	json.NewEncoder(w).Encode(response)
 

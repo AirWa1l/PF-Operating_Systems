@@ -224,8 +224,6 @@ class JaConsoleApp(cmd.Cmd):
 
             dic = self.us.set_execution(commands,alg = algorithm)
 
-            print(dic)
-
             if len(args) == 3:
                 
                 quantum = args[2] 
@@ -238,8 +236,8 @@ class JaConsoleApp(cmd.Cmd):
 
         except FileNotFoundError:
             print(f"Archivo no encontrado: {filename}")
-        #except Exception as e:
-            #print(f"Error al ejecutar el comando de scheduling: {e}")
+        except Exception as e:
+            print(f"Error al ejecutar el comando de scheduling: {e}")
 
 
     def do_exit(self, args):

@@ -28,7 +28,7 @@ func throwError(err error, status int, w http.ResponseWriter) {
 func LoginUser(w http.ResponseWriter, r *http.Request) {
 	var creds security.Credentials
 
-	log.Println("Logeado pa")
+	log.Println("Logeado")
 
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
@@ -91,7 +91,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	// Eliminar cookie de token
-	log.Println("Deslogeado pa")
+	log.Println("Deslogeado")
 
 	http.SetCookie(w, &http.Cookie{
 		Name:    "token",
@@ -389,7 +389,7 @@ func GenerateExecution(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println(request)
+	//log.Println(request)
 
 	transaction := config.Db.Begin()
 

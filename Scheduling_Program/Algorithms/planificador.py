@@ -95,7 +95,7 @@ def srt(commands,dict_of_images):
         while commands and commands[0][1] <= current_time:
             queue.append(commands.pop(0))
         if queue:
-            print(burst_times)
+            #print(burst_times)
             queue.sort(key=lambda x: burst_times[i])  # Sort by remaining burst time
             command, arrival_time, burst_time = queue.pop(0)
             index = list(burst_times.keys())[list(burst_times.values()).index(burst_time)]
@@ -186,8 +186,8 @@ def round_robin(commands, dict_of_images, quantum=2):
             command, arrival_time, burst_time = queue.pop(0)
             index = list(burst_times.keys())[list(burst_times.values()).index(burst_time)]
             if burst_time > quantum:
-                print(dict_of_images[command][0])
-                thread = threading.Thread(target=execute_command, args=(dict_of_images[command][0],quantum)) # quantum
+                #print(dict_of_images[command][0])
+                thread = threading.Thread(target=execute_command, args=(dict_of_images[command][0],quantum)) 
                 thread.start()
                 thread.join(quantum)
                 remaining_time = burst_time - quantum

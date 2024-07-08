@@ -139,7 +139,7 @@ class UserSession:
         cookies = {
             "token": self.token
         }
-        print(data)
+
         response = requests.put(url = url, headers = headers, cookies = cookies,json = data)
         return response.json().get("State") # StatusOK if update was okey
 
@@ -347,7 +347,6 @@ class UserSession:
 
                 json = response.json()
 
-                #print(json)
 
                 if response.status_code == 200 and response.json().get("success") == True and response.json().get("Status") == 201:
 
@@ -355,11 +354,9 @@ class UserSession:
 
                     parameter = self.get_image(command)
 
-                    #print(parameter)
 
                     if parameter == False:
 
-                        #print("hola")
 
                         ruta,dockerfile,tag = self.c_dockerfile(command=command)
 
@@ -401,8 +398,6 @@ class UserSession:
             response = requests.post(url=urlM,json=data,headers=headers,cookies=cookies)
 
             json = response.json()
-
-        #dict_to_return =  self.evaluate_images_in_os(data=dict_to_images_id)
 
         return dict_to_images_id
     
