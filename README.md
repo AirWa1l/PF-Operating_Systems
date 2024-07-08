@@ -1,4 +1,4 @@
-<p align="center"> Manual de Usuario "Linea de comando" </p>
+<h1 align="center"> Manual de Usuario "Linea de comando" </h1>
 
 ## Tabla de Contenidos
 
@@ -49,8 +49,27 @@ sobre la cual trataremos a continuación
 
    Es muy importante que siga esa estructura, con las comas incluidas, porque sino nos dará error
 
-7.  Por ultimo, podemos deslogearnos de la App por medio de la palabra "logout"
-8.  Salimos de la App con "exit"
+7. Antes de desloguearnos de la aplicación de consola, es importante que el usuario sepa acerca de unas
+   funcionalidades adicionales:
+
+   rept : Este comando repite una ejecucion en concreto con cualquier algoritmo que el usuario desee
+
+         * rept <id de la ejecución> <algoritmo>
+
+   clean : Limpia todas las ejecuciones que tenga un usuario
+
+         * clean
+   
+   pro : muestra el nombre y correo del usuario
+
+         * pro
+
+   edit : Se le permite al usuario actualizar su nombre y el email registrados
+
+         *  edit name <nuevo nombre> email <nuevo email>
+
+8. Por ultimo, podemos deslogearnos de la App por medio de la palabra "logout"
+9. Salimos de la App con "exit"
 
 
 ## Contribución
