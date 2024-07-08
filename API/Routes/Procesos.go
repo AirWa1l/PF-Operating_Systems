@@ -76,7 +76,7 @@ func GetProcessesByExec(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transaction.Table("proceso").Select("proceso.*").Joins("JOIN proceso_ejecucion ON proceso_ejecucion.pid = proceso.id").Joins("JOIN ejecucion ON ejecucion.id = proceso_ejecucion.eid AND ejecucion.id = ?", request.EID).Find(&processes).Error; err != nil {
+	if err := transaction.Table("proceso").Select("proceso.*").Joins("JOIN proceso_ejecucion ON proceso_ejecucion.pid = proceso.id").Joins("JOIN ejecucion ON ejecucion.id = proceso_ejecucion.eid AND ejecucion.id = ?", request.EID).Where("ejecucion.deleted_at IS NULL").Find(&processes).Error; err != nil {
 		transaction.Rollback()
 		throwError(err, http.StatusNotFound, w)
 		return

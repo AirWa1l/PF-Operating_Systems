@@ -193,6 +193,11 @@ class JaConsoleApp(cmd.Cmd):
 
         dic,commands = self.us.reused_user_executions(id_exec)
 
+        if len(dic) == 0 or len(commands) == 0:
+
+            print(f"Execution not found")
+            return
+
         if len(args) == 3:
             quatum = args[2]
 
